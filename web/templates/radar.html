@@ -1,0 +1,33 @@
+{{include header.html}}
+<h2>📡 Live Collaboration Radar</h2>
+<div class="card">
+  <p>Auto-refreshes every 30 seconds. <button onclick="refresh()">🔄 Refresh Now</button></p>
+  <div id="events-list"></div>
+</div>
+<script>
+const eventIcons = {
+  PushEvent: '📤', PullRequestEvent: '🔀', IssuesEvent: '🐛',
+  WatchEvent: '⭐', ForkEvent: '🍴', CreateEvent: '🆕',
+  DeleteEvent: '🗑️', IssueCommentEvent: '💬', ReleaseEvent: '🏷️',
+  PublicEvent: '🌍', MemberEvent: '👤', GollumEvent: '📝',
+};
+async function refresh() {
+  const r = await fetch('/api/radar');
+  const d = await r.json();
+  let h = '';
+  (d.events || []).forEach(e => {
+    const icon = eventIcons[e.type] || '📌';
+    const time = new Date(e.created_at).toLocaleTimeString();
+    const type = e.type.replace('Event', '');
+    h += `<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1)">
+      ${icon} <strong>${e.actor}</strong> → ${type} on <a href="https://github.com/${e.repo}">${e.repo}</a>
+      <small style="float:right;opacity:0.6">${time}</small>
+    </div>`;
+  });
+  if (!h) h = '<p>No recent events.</p>';
+  document.getElementById('events-list').innerHTML = h;
+}
+refresh();
+setInterval(refresh, 30000);
+</script>
+{{include footer.html}}

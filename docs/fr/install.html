@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — Installation</title><link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Accueil</a><a href="readme.html">README</a><a href="install.html" class="active">Installation</a>
+    <a href="howto.html">Guides</a><a href="faq.html">FAQ</a><a href="commands.html">Commandes</a>
+    <a href="webui.html">Interface Web</a><a href="themes.html">Thèmes</a><a href="config.html">Configuration</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Installation</h1>
+
+<h2>Prérequis</h2>
+<ul>
+  <li><strong>Python 3.8+</strong> (testé 3.8–3.12)</li>
+  <li><strong>requests</strong> (installé automatiquement par l'installeur)</li>
+  <li><strong>Token GitHub</strong> (voir ci-dessous)</li>
+</ul>
+
+<h2>Option A : Installeur en une étape (recommandé)</h2>
+<pre><code>bash gitpulse.sh      # Sélectionner option 2 (Installer)</code></pre>
+<p>L'installeur fait tout en une étape :</p>
+<div class="steps">
+  <div class="step">Met à jour l'index des paquets (Linux)</div>
+  <div class="step">Installe Python 3.8+ si absent</div>
+  <div class="step">Installe pip si absent</div>
+  <div class="step">Installe git si absent</div>
+  <div class="step">Installe <code>requests</code> via pip</div>
+  <div class="step">Copie tous les fichiers vers <code>~/.gitpulse/</code> (y compris le lanceur)</div>
+  <div class="step">Crée automatiquement l'alias <code>gp</code> dans <code>~/.bashrc</code> ou <code>~/.zshrc</code></div>
+</div>
+<p>Après l'installation : supprimez le dossier d'extraction — l'alias <code>gp</code> pointe vers <code>~/.gitpulse/gitpulse.sh</code> et fonctionne partout.</p>
+
+<h2>Option B : Installation manuelle</h2>
+<pre><code># 1. Décompresser ou cloner gitpulse/
+# 2. Installer la dépendance
+pip install requests
+
+# 3. Lancer
+python gitpulse.py</code></pre>
+
+<h2>Option C : USB portable (aucune installation)</h2>
+<div class="steps">
+  <div class="step">Copier le dossier <code>gitpulse/</code> sur une clé USB</div>
+  <div class="step">(Optionnel) Mettre WinPython dans <code>portable/python/</code> pour Windows sans installation</div>
+  <div class="step">Lancer <code>portable/run.bat</code> (Windows) ou <code>portable/run.sh</code> (Mac/Linux)</div>
+</div>
+
+<h2>Token GitHub</h2>
+<p>GitPulse a besoin d'un <strong>Personal Access Token</strong> pour accéder à vos dépôts :</p>
+<div class="steps">
+  <div class="step">Aller sur <a href="https://github.com/settings/tokens">github.com/settings/tokens</a></div>
+  <div class="step">Cliquer « Generate new token (classic) »</div>
+  <div class="step">Sélectionner les portées : <code>repo</code>, <code>read:org</code>, <code>read:user</code></div>
+  <div class="step">Copier le token (commence par <code>ghp_</code>)</div>
+  <div class="step">Coller dans GitPulse au premier lancement (ou via <code>--token</code>)</div>
+</div>
+
+<h2>Vérifier l'installation</h2>
+<pre><code># Depuis n'importe quel répertoire :
+gp
+
+# Ou directement :
+python ~/.gitpulse/gitpulse.py
+
+# Mode Web :
+gp --web
+
+# Lancer l'installeur
+bash gitpulse.sh</code></pre>
+
+<div class="doc-footer">
+  <a href="index.html">← Retour aux Docs</a> · <a href="howto.html">Guides →</a>
+</div>
+</div>
+</body>
+</html>

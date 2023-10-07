@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — Guides pratiques</title><link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Accueil</a><a href="readme.html">README</a><a href="install.html">Installation</a>
+    <a href="howto.html" class="active">Guides</a><a href="faq.html">FAQ</a><a href="commands.html">Commandes</a>
+    <a href="webui.html">Interface Web</a><a href="themes.html">Thèmes</a><a href="config.html">Configuration</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Guides pratiques</h1>
+
+<h2>Sommaire</h2>
+<ul>
+  <li><a href="#first-run">Premier lancement</a></li>
+  <li><a href="#demo">Mode démo</a></li>
+  <li><a href="#list-repos">Lister et chercher les dépôts</a></li>
+  <li><a href="#create-repo">Créer un dépôt</a></li>
+  <li><a href="#files">Espace de fichiers (IDE)</a></li>
+  <li><a href="#backup">Sauvegarder</a></li>
+  <li><a href="#health">Vérifier la santé</a></li>
+  <li><a href="#secrets">Détecter les secrets exposés</a></li>
+  <li><a href="#archaeology">Nettoyer les branches mortes</a></li>
+  <li><a href="#grouper">Catégoriser automatiquement</a></li>
+  <li><a href="#rhythm">Schémas de commits</a></li>
+  <li><a href="#analytics">Analytique du trafic</a></li>
+  <li><a href="#accounts">Multi-compte</a></li>
+  <li><a href="#ai">Résumés IA</a></li>
+  <li><a href="#theme">Changer de thème</a></li>
+  <li><a href="#language">Changer la langue</a></li>
+  <li><a href="#voice">Commandes vocales</a></li>
+  <li><a href="#timemachine">Machine à remonter le temps</a></li>
+  <li><a href="#portable">Mode USB portable</a></li>
+</ul>
+
+<h2 id="first-run">Premier lancement & Configuration</h2>
+<pre><code>bash gitpulse.sh          # Option 2 = Installer
+gp                        # Lancer (l'alias est créé automatiquement)
+gp --web                  # Lancer l'interface Web</code></pre>
+<p>Au premier lancement, GitPulse demande votre token GitHub. Collez-le et appuyez sur Entrée. Le token est sauvegardé dans <code>~/.gitpulse/config.json</code>.</p>
+
+<h2 id="demo">Essayer le mode démo</h2>
+<pre><code>gp --demo                 # CLI avec données simulées
+gp --web --demo           # Interface Web avec données simulées</code></pre>
+<p>17 dépôts exemples, aucun token nécessaire. Parfait pour découvrir les fonctionnalités.</p>
+
+<h2 id="list-repos">Lister & Chercher les dépôts</h2>
+<h3>CLI</h3>
+<pre><code># Lancer GitPulse, choisir option 1 (Lister) ou 2 (Chercher)
+gp</code></pre>
+<h3>Web</h3>
+<p>Aller sur <code>/repos</code>. Cliquer sur les en-têtes de colonnes pour trier. Utiliser la barre de recherche pour filtrer. Les préférences de tri sont sauvegardées.</p>
+
+<h2 id="create-repo">Créer un dépôt</h2>
+<p><strong>CLI :</strong> Option 4 → entrer le nom, la description, la visibilité.</p>
+<p><strong>Web :</strong> Page Dépôts → bouton « + Nouveau dépôt » → remplir le formulaire → Créer.</p>
+
+<h2 id="files">Espace de fichiers (IDE)</h2>
+<p>Aller sur <code>/repo/{nom}/files</code> pour un navigateur de fichiers complet :</p>
+<ul>
+  <li><strong>Parcourir</strong> — arbre de fichiers extensible à gauche, cliquer pour voir le contenu</li>
+  <li><strong>Voir</strong> — coloration syntaxique pour 15+ langages, numéros de lignes</li>
+  <li><strong>Éditer</strong> — modifier n'importe quel fichier, commit direct sur GitHub</li>
+  <li><strong>Aperçu</strong> — rendu Markdown en direct avec vue partagée</li>
+  <li><strong>Nouveau / Téléverser / Supprimer</strong> — gestion complète des fichiers</li>
+  <li><strong>Outils génie</strong> — générateur README, scanner de secrets, recherche de code, suivi TODO, galerie d'images, injecteur de modèles</li>
+</ul>
+
+<h2 id="backup">Sauvegarder tous les dépôts</h2>
+<p><strong>CLI :</strong> Option 10 → sauvegarde les métadonnées de tous les dépôts en JSON horodaté.</p>
+
+<h2 id="health">Vérifier la santé des dépôts</h2>
+<p><strong>CLI :</strong> Option 11 → chaque dépôt reçoit un score basé sur : README, licence, CI, issues, description, taille.</p>
+<p><strong>Web :</strong> <code>/health</code> → tableau avec scores colorés et badges.</p>
+
+<h2 id="secrets">Détecter les secrets exposés</h2>
+<p><strong>CLI :</strong> Option 23 → scanne les fichiers à la recherche de patterns de clés API, mots de passe, tokens.</p>
+<p><strong>Web :</strong> <code>/danger</code> → interface visuelle avec indicateurs de risque. Aussi disponible dans l'espace de fichiers via le bouton 🔐 Secrets.</p>
+
+<h2 id="archaeology">Nettoyer les branches mortes & TODOs</h2>
+<p><strong>CLI :</strong> Option 24 → trouve les branches fusionnées/obsolètes, gros fichiers, commentaires TODO/FIXME/HACK.</p>
+<p><strong>Web :</strong> <code>/archaeology</code> ou dans l'espace de fichiers via le bouton 📋 TODOs.</p>
+
+<h2 id="grouper">Catégoriser automatiquement les dépôts</h2>
+<p><strong>CLI :</strong> Option 25 → classe les dépôts en 10 catégories (web, mobile, API, data, devops, etc.).</p>
+<p><strong>Web :</strong> <code>/grouper</code></p>
+
+<h2 id="rhythm">Voir vos schémas de commits</h2>
+<p><strong>CLI :</strong> Option 26 → analyse les heures, jours, séquences de commits. Score de régularité.</p>
+<p><strong>Web :</strong> <code>/rhythm</code> → graphiques interactifs.</p>
+
+<h2 id="analytics">Voir l'analytique du trafic</h2>
+<p><strong>CLI :</strong> Option 20 → vues, clones, référents, chemins populaires (14 derniers jours).</p>
+<p><strong>Web :</strong> <code>/analytics</code></p>
+
+<h2 id="accounts">Basculer entre les comptes</h2>
+<p><strong>CLI :</strong> Option 27 → ajouter, lister, basculer entre les tokens GitHub.</p>
+<p>Fichier : <code>~/.gitpulse/accounts.json</code></p>
+
+<h2 id="ai">Générer des résumés IA</h2>
+<p><strong>CLI :</strong> Option 22 → nécessite une clé OpenAI dans la config (<code>"openai_key"</code>).</p>
+<p>Génère des résumés de dépôts et raconte les diffs de manière narrative.</p>
+
+<h2 id="theme">Changer de thème</h2>
+<h3>Interface Web</h3>
+<p><code>/settings</code> → cliquer sur une pastille de thème. Appliqué instantanément.</p>
+<h3>CLI</h3>
+<p>Option 29 (Paramètres) → Thème → choisir parmi les 7 thèmes.</p>
+<p>Les 7 thèmes : Masjid, Andalus, Al-Hamra, Nur, Raqsh, Sahra, Zahra.</p>
+
+<h2 id="language">Changer la langue</h2>
+<p><strong>Web :</strong> <code>/settings</code> → sélectionner English, Français ou العربية. Changement en direct, pas de rechargement.</p>
+<p><strong>CLI :</strong> Option 29 → Langue.</p>
+<p>L'arabe active automatiquement la mise en page RTL (droite à gauche).</p>
+
+<h2 id="voice">Utiliser les commandes vocales</h2>
+<p>Aller sur <code>/voice</code>. Cliquer sur le microphone. Commandes supportées :</p>
+<ul>
+  <li>« montre-moi mes dépôts » → page Dépôts</li>
+  <li>« ouvre le tableau de bord » → page Dashboard</li>
+  <li>« vérifie la santé » → page Health</li>
+</ul>
+<p>Nécessite Chrome ou Edge (API Web Speech).</p>
+
+<h2 id="timemachine">Machine à remonter le temps</h2>
+<p>Aller sur <code>/timemachine/{nom}</code>. Utilisez le curseur pour naviguer dans les commits. L'arbre de fichiers se met à jour en temps réel pour montrer l'état du dépôt à chaque commit.</p>
+
+<h2 id="portable">Mode USB portable</h2>
+<ol>
+  <li>Copier le dossier <code>gitpulse/</code> sur une clé USB</li>
+  <li>(Optionnel) Ajouter WinPython dans <code>portable/python/</code></li>
+  <li>Lancer <code>portable/run.bat</code> (Windows) ou <code>portable/run.sh</code> (Mac/Linux)</li>
+</ol>
+<p>Toute la configuration reste sur la clé USB. Rien n'est écrit sur la machine hôte.</p>
+
+<div class="doc-footer">
+  <a href="index.html">← Retour aux Docs</a> · <a href="faq.html">FAQ →</a>
+</div>
+</div>
+</body>
+</html>

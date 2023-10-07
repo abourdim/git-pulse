@@ -1,0 +1,455 @@
+{{include header.html}}
+<style>
+  .tuto-hero { text-align:center; padding:30px 0 20px; }
+  .tuto-hero h1 { font-size:28px; color:var(--accent); margin-bottom:6px; }
+  .tuto-hero p { color:var(--text-dim); }
+  .tuto-section { margin-bottom:30px; }
+  .tuto-section h2 { color:var(--accent2); font-size:18px; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:6px; }
+  .tuto-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:14px; }
+  .tuto-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px; transition:border-color 0.2s;
+  }
+  .tuto-card:hover { border-color:var(--accent); }
+  .tuto-card h3 { font-size:15px; margin-bottom:6px; color:var(--text); }
+  .tuto-card h3 .emoji { margin-right:6px; }
+  .tuto-card p { font-size:13px; color:var(--text-dim); margin-bottom:8px; line-height:1.5; }
+  .tuto-cmd {
+    background:var(--bg); border:1px solid var(--border); border-radius:4px;
+    padding:6px 10px; font-family:'SF Mono','Fira Code',monospace; font-size:12px;
+    color:var(--accent); display:inline-block; margin:2px 0;
+  }
+  .tuto-badge {
+    display:inline-block; padding:1px 7px; border-radius:10px;
+    font-size:10px; font-weight:600; margin-left:6px;
+  }
+  .tuto-badge-cli { background:rgba(88,166,255,0.15); color:var(--accent); }
+  .tuto-badge-web { background:rgba(63,185,80,0.15); color:var(--accent2); }
+  .tuto-badge-both { background:rgba(210,168,60,0.15); color:#d4a83c; }
+  .tuto-start {
+    text-align:center; margin:30px 0; padding:25px;
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  }
+  .tuto-start h3 { margin-bottom:12px; }
+  .tuto-start .tuto-cmd { font-size:14px; padding:8px 16px; }
+  .tuto-themes { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .tuto-theme-dot {
+    width:28px; height:28px; border-radius:50%; border:2px solid var(--border);
+    display:inline-flex; align-items:center; justify-content:center; font-size:10px;
+    cursor:default;
+  }
+</style>
+
+<div class="tuto-hero">
+  <h1>GitPulse v{{version}} — Tutorial</h1>
+  <p>Complete guide to every feature · CLI + Web UI · 29 commands · 20 web pages</p>
+</div>
+
+<!-- QUICK START -->
+<div class="tuto-start">
+  <h3>Quick Start</h3>
+  <p>
+    <span class="tuto-cmd">python gitpulse.py</span> CLI mode<br><br>
+    <span class="tuto-cmd">python gitpulse.py --web</span> Web UI (opens browser)<br><br>
+    <span class="tuto-cmd">python gitpulse.py --demo</span> Demo mode (no token)<br><br>
+    <span class="tuto-cmd">python gitpulse.py --web --demo</span> Web demo<br><br>
+    <span class="tuto-cmd">bash gitpulse.sh</span> Full installer (MSYS2/Git Bash/Linux)
+  </p>
+  <p style="color:var(--text-dim);font-size:12px;margin-top:12px">
+    Only dependency: <code>requests</code> · Python 3.8+ · GitHub token with <code>repo</code> + <code>read:user</code> scopes
+  </p>
+</div>
+
+<!-- REPOS -->
+<div class="tuto-section">
+  <h2>📦 Repos</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">📋</span>List Repos <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>View all your GitHub repositories with visibility badges, language, stars, and last update. Sort by name, date, or stars. Filter by public/private/all.</p>
+      <span class="tuto-cmd">CLI: option 1</span><br>
+      <span class="tuto-cmd">Web: /repos</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🔍</span>Search Repos <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>Search across all repos by name, description, topic, or language. Instant results with matching highlights.</p>
+      <span class="tuto-cmd">CLI: option 2</span><br>
+      <span class="tuto-cmd">Web: search bar on /repos</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">📄</span>Repo Details <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>Full view: description, language breakdown (%), recent commits, branches, clone URL, topics, license, creation date.</p>
+      <span class="tuto-cmd">CLI: option 3</span><br>
+      <span class="tuto-cmd">Web: /repo/{name}</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">✨</span>Create Repo <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>Create a new repository with name, description, public/private toggle, and optional auto-init with README.</p>
+      <span class="tuto-cmd">CLI: option 4</span><br>
+      <span class="tuto-cmd">Web: POST /api/repo/create</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🗑️</span>Delete Repo <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Permanently delete a repository. Requires double confirmation (type the name). Hidden in beginner mode.</p>
+      <span class="tuto-cmd">CLI: option 5 (advanced)</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">✏️</span>Edit Repo <span class="tuto-badge tuto-badge-cli">CLI</span> <span class="tuto-badge tuto-badge-web">Web</span></h3>
+      <p>Change name, description, visibility (public/private), topics, default branch, homepage URL, wiki, issues, and archived status.</p>
+      <span class="tuto-cmd">CLI: option 6 · Web: /repo/{name} → Edit button</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">📥</span>Clone Repo <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Clone any of your repos to a local directory. Uses git clone with your configured SSH or HTTPS.</p>
+      <span class="tuto-cmd">CLI: option 7</span>
+    </div>
+  </div>
+</div>
+
+<!-- GIT INFO -->
+<div class="tuto-section">
+  <h2>🔀 Git Info</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">📝</span>View Commits <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>List recent commits with SHA, message, author, and date. Configurable count (default 10). Color-coded by author.</p>
+      <span class="tuto-cmd">CLI: option 8</span><br>
+      <span class="tuto-cmd">Web: /repo/{name} (commits section)</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🌿</span>View Branches <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>List all branches with protection status. Shows default branch. Useful before merging or cleaning up.</p>
+      <span class="tuto-cmd">CLI: option 9</span><br>
+      <span class="tuto-cmd">Web: /repo/{name} (branches section)</span>
+    </div>
+  </div>
+</div>
+
+<!-- POWER TOOLS -->
+<div class="tuto-section">
+  <h2>⚡ Power Tools</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">💾</span>Backup Manager <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>Clone ALL your repos at once into a local directory. Optionally compress to a timestamped .zip archive. Schedule with cron.</p>
+      <span class="tuto-cmd">CLI: option 10</span><br>
+      <span class="tuto-cmd">Web: /backup</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🏥</span>Health Dashboard <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>Score every repo 0-100% based on: has README ✓, LICENSE ✓, .gitignore ✓, description ✓, topics ✓. Spot neglected repos instantly.</p>
+      <span class="tuto-cmd">CLI: option 11</span><br>
+      <span class="tuto-cmd">Web: /health</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🔧</span>Bulk Operations <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Mass rename repos, toggle visibility (public↔private), bulk delete, add/remove topics across multiple repos at once.</p>
+      <span class="tuto-cmd">CLI: option 12 (advanced)</span>
+    </div>
+  </div>
+</div>
+
+<!-- GIT DEEP -->
+<div class="tuto-section">
+  <h2>🔬 Git Deep</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">📊</span>Interactive Git Log <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Rich git log with graph view, color-coded branches, author filters, date range filters. Navigate with keyboard.</p>
+      <span class="tuto-cmd">CLI: option 13</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🔎</span>Cross-Repo Search <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Search for code, filenames, commits, or issues across ALL your repos using GitHub Search API. Find that function you wrote 6 months ago.</p>
+      <span class="tuto-cmd">CLI: option 14</span>
+    </div>
+  </div>
+</div>
+
+<!-- DEVOPS -->
+<div class="tuto-section">
+  <h2>🚀 DevOps</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">⚙️</span>GitHub Actions Monitor <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>View workflow runs across all repos. See status (pass/fail/running), duration, trigger event. Quick access to logs.</p>
+      <span class="tuto-cmd">CLI: option 15</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🏷️</span>Release Manager <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Create Git tags, create releases with notes, upload release assets (.zip, .bin, etc.), list all releases.</p>
+      <span class="tuto-cmd">CLI: option 16</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLKIT -->
+<div class="tuto-section">
+  <h2>🛠️ Toolkit</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">📁</span>Repo Templates <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Create repos from boilerplates: Python package, Node.js app, ESP32 firmware, static website. Auto-generates README, .gitignore, LICENSE, CI config.</p>
+      <span class="tuto-cmd">CLI: option 17</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🔑</span>SSH Key Manager <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Generate ed25519 SSH keys, upload public key to GitHub, test connection. One command to set up SSH auth.</p>
+      <span class="tuto-cmd">CLI: option 18</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">⏰</span>Timestamp Editor <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>View, shift, or randomize commit dates. Shift all commits by N hours/days. Randomize within business hours. Useful for privacy or fixing timezone mistakes.</p>
+      <span class="tuto-cmd">CLI: option 19</span>
+    </div>
+  </div>
+</div>
+
+<!-- INSIGHTS -->
+<div class="tuto-section">
+  <h2>📊 Insights</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">📈</span>Analytics & Traffic <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>14-day view counts, unique visitors, clone counts, and top referrers for any repo. Bar chart visualization in web UI.</p>
+      <span class="tuto-cmd">CLI: option 20</span><br>
+      <span class="tuto-cmd">Web: /analytics</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">📦</span>Dependency Scanner <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Scan requirements.txt, package.json, Cargo.toml for outdated packages. Flags known vulnerabilities. Checks latest versions.</p>
+      <span class="tuto-cmd">CLI: option 21</span>
+    </div>
+  </div>
+</div>
+
+<!-- AI -->
+<div class="tuto-section">
+  <h2>🤖 AI / Summary</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">🧠</span>AI Summaries <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Generate a plain-English summary of any repo: what it does, tech stack, activity level. Uses OpenAI API (optional) or pattern-based fallback.</p>
+      <span class="tuto-cmd">CLI: option 22</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">📖</span>Magic Diff Storyteller <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Turns recent commits into a narrative: "The project started with X, then the team focused on Y..." Pure pattern matching — no AI API needed.</p>
+      <span class="tuto-cmd">CLI: option 22 → sub-menu</span>
+    </div>
+  </div>
+</div>
+
+<!-- SENTINEL -->
+<div class="tuto-section">
+  <h2>🛡️ Sentinel</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">🔴</span>Danger Zone <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>Security scanner: detects 14 types of leaked secrets (GitHub tokens, AWS keys, Slack tokens, Stripe keys, private keys, etc.). Also checks risk indicators: missing .gitignore, public repo without license, unprotected default branch, repo &gt;500MB.</p>
+      <span class="tuto-cmd">CLI: option 23</span><br>
+      <span class="tuto-cmd">Web: /danger</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🏺</span>Git Archaeology <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>Discover dead branches (&gt;6 months without commits), large files (&gt;1MB), TODO/FIXME/HACK comments scattered in code, stale PRs (&gt;90 days), and empty repos.</p>
+      <span class="tuto-cmd">CLI: option 24</span><br>
+      <span class="tuto-cmd">Web: /archaeology</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">📂</span>Smart Repo Grouper <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>Auto-categorize all repos into 10 types: Web App, Mobile, IoT/HW, API/Backend, Library, Data/ML, DevOps, Docs, Learning, Tool/CLI. Detection based on language, files, topics, name patterns.</p>
+      <span class="tuto-cmd">CLI: option 25</span><br>
+      <span class="tuto-cmd">Web: /grouper</span>
+    </div>
+  </div>
+</div>
+
+<!-- RHYTHM -->
+<div class="tuto-section">
+  <h2>💓 Rhythm</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">📉</span>Commit Rhythm Analyzer <span class="tuto-badge tuto-badge-both">CLI+Web</span></h3>
+      <p>Analyzes your coding patterns across repos. Detects: peak coding hour, morning/evening/night percentages, weekday distribution, weekend coding %, burst days (5+ commits). Assigns a style: Night Owl 🦉, Early Bird 🐦, Evening Warrior 🌙, Dual Mode 🔄, Steady Coder ⚡.</p>
+      <span class="tuto-cmd">CLI: option 26</span><br>
+      <span class="tuto-cmd">Web: /rhythm</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">👤</span>Multi-Account Manager <span class="tuto-badge tuto-badge-cli">CLI only</span></h3>
+      <p>Add multiple GitHub accounts (personal, work, client). Switch between them instantly. Tokens stored securely in ~/.gitpulse/accounts.json (chmod 600).</p>
+      <span class="tuto-cmd">CLI: option 27</span>
+    </div>
+  </div>
+</div>
+
+<!-- WEB-ONLY -->
+<div class="tuto-section">
+  <h2>🌐 Web-Only Features</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">⏰</span>Git Time Machine <span class="tuto-badge tuto-badge-web">Web only</span></h3>
+      <p>Drag a slider through your commit history. See the commit message, author, date, and file tree at each point. Like scrubbing through a video of your repo's life.</p>
+      <span class="tuto-cmd">Web: /timemachine/{repo}</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🧬</span>Repo DNA Fingerprint <span class="tuto-badge tuto-badge-web">Web only</span></h3>
+      <p>Generates a unique visual fingerprint (SVG) from repo characteristics: language mix, commit count, stars, creation date. Every repo gets a different pattern. Deterministic — same input always produces the same art.</p>
+      <span class="tuto-cmd">Web: /dna</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🕸️</span>Repo Relationship Graph <span class="tuto-badge tuto-badge-web">Web only</span></h3>
+      <p>Force-directed graph visualization of all your repos. Nodes are repos (sized by stars), colored by language. Repos sharing a language are connected. Drag, zoom, explore.</p>
+      <span class="tuto-cmd">Web: /graph</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">📡</span>Live Collaboration Radar <span class="tuto-badge tuto-badge-web">Web only</span></h3>
+      <p>Real-time feed of GitHub events: pushes, PRs, issues, stars, forks happening on your repos. Auto-refreshes every 30 seconds. See who's interacting with your code.</p>
+      <span class="tuto-cmd">Web: /radar</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🎤</span>Voice Control <span class="tuto-badge tuto-badge-web">Web only</span></h3>
+      <p>Click the microphone and speak: "list repos", "health check", "danger scan", "rhythm", "dashboard", "settings". Uses browser Speech Recognition API (Chrome/Edge).</p>
+      <span class="tuto-cmd">Web: /voice</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🌙</span>Ambient Dashboard <span class="tuto-badge tuto-badge-web">Web only</span></h3>
+      <p>Full-screen always-on display: clock, date, repo stats (total, public, private, stars), live event feed. Auto-dims between 11pm–6am. Perfect for a wall monitor or side screen.</p>
+      <span class="tuto-cmd">Web: /ambient</span>
+    </div>
+  </div>
+</div>
+
+<!-- THEMES -->
+<div class="tuto-section">
+  <h2>🎨 7 Islamic Art Themes</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3>المسجد Masjid</h3>
+      <p>Night sky, turquoise domes, moonlight marble. Default theme.</p>
+      <div class="tuto-themes">
+        <span class="tuto-theme-dot" style="background:#0a0e27">bg</span>
+        <span class="tuto-theme-dot" style="background:#40c9c6">acc</span>
+        <span class="tuto-theme-dot" style="background:#e8ddb5">acc2</span>
+      </div>
+    </div>
+    <div class="tuto-card">
+      <h3>الأندلس Andalus</h3>
+      <p>Walnut wood, Cordoba gold, zellige tile red. Dark.</p>
+      <div class="tuto-themes">
+        <span class="tuto-theme-dot" style="background:#1a0f0a">bg</span>
+        <span class="tuto-theme-dot" style="background:#d4a843">acc</span>
+        <span class="tuto-theme-dot" style="background:#c0392b">acc2</span>
+      </div>
+    </div>
+    <div class="tuto-card">
+      <h3>الحمراء Al-Hamra</h3>
+      <p>Earth walls, terracotta arches, garden green. Dark.</p>
+      <div class="tuto-themes">
+        <span class="tuto-theme-dot" style="background:#1a1008">bg</span>
+        <span class="tuto-theme-dot" style="background:#c0714a">acc</span>
+        <span class="tuto-theme-dot" style="background:#5a8a4a">acc2</span>
+      </div>
+    </div>
+    <div class="tuto-card">
+      <h3>نور Nur</h3>
+      <p>Aged parchment, gold ink, lapis lazuli. Light theme.</p>
+      <div class="tuto-themes">
+        <span class="tuto-theme-dot" style="background:#f5f0e8">bg</span>
+        <span class="tuto-theme-dot" style="background:#c8a84a">acc</span>
+        <span class="tuto-theme-dot" style="background:#2e4a8a">acc2</span>
+      </div>
+    </div>
+    <div class="tuto-card">
+      <h3>رقش Raqsh</h3>
+      <p>Cream paper, Ottoman indigo, tulip red. Light theme.</p>
+      <div class="tuto-themes">
+        <span class="tuto-theme-dot" style="background:#faf5ef">bg</span>
+        <span class="tuto-theme-dot" style="background:#3a4a8a">acc</span>
+        <span class="tuto-theme-dot" style="background:#b03040">acc2</span>
+      </div>
+    </div>
+    <div class="tuto-card">
+      <h3>صحراء Sahra</h3>
+      <p>Desert night sky, sand gold, twilight purple. Dark.</p>
+      <div class="tuto-themes">
+        <span class="tuto-theme-dot" style="background:#0a0a1e">bg</span>
+        <span class="tuto-theme-dot" style="background:#d4a843">acc</span>
+        <span class="tuto-theme-dot" style="background:#8a5aaa">acc2</span>
+      </div>
+    </div>
+    <div class="tuto-card">
+      <h3>زهرة Zahra</h3>
+      <p>Deep ocean, emerald green, jade geometry. Dark.</p>
+      <div class="tuto-themes">
+        <span class="tuto-theme-dot" style="background:#081018">bg</span>
+        <span class="tuto-theme-dot" style="background:#2ecc71">acc</span>
+        <span class="tuto-theme-dot" style="background:#e74c3c">acc2</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODES & LANGUAGES -->
+<div class="tuto-section">
+  <h2>🌍 Modes & Languages</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">🐣</span>Beginner Mode</h3>
+      <p>8 menu items with friendly labels: "projects" instead of "repos", "download" instead of "clone". Dangerous features (delete, bulk delete) are hidden. Perfect for new users.</p>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🔥</span>Advanced Mode</h3>
+      <p>29 menu items organized in sections: Repos, Git Info, Power Tools, Git Deep, DevOps, Toolkit, Insights, AI, Sentinel, Rhythm. Full technical terminology. All features unlocked.</p>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">🇬🇧</span>English · <span class="emoji">🇫🇷</span>Français · <span class="emoji">🇸🇦</span>العربية</h3>
+      <p>Full i18n with 3 languages. Arabic includes RTL layout support. Change language anytime from Settings. Web UI adapts direction automatically.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PORTABLE -->
+<div class="tuto-section">
+  <h2>💾 Portable & Demo</h2>
+  <div class="tuto-grid">
+    <div class="tuto-card">
+      <h3><span class="emoji">🔌</span>USB Portable Mode</h3>
+      <p>Run from a USB stick with no installation. Config stored on the stick, not on the host machine. Works on Windows (run.bat) and Linux (run.sh). Optionally embed WinPython for zero-install Windows.</p>
+      <span class="tuto-cmd">Windows: portable\run.bat</span><br>
+      <span class="tuto-cmd">Linux: portable/run.sh</span>
+    </div>
+    <div class="tuto-card">
+      <h3><span class="emoji">★</span>Demo Mode</h3>
+      <p>Try every feature without a GitHub token. 17 realistic sample repos spanning IoT, web, ML, mobile, and hardware projects. Mock data for health, security, analytics, and events. Repos can be "created" and "deleted" in-session (resets on restart).</p>
+      <span class="tuto-cmd">python gitpulse.py --demo</span><br>
+      <span class="tuto-cmd">Web: click "Try Demo" on welcome page</span>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIG -->
+<div class="tuto-section">
+  <h2>⚙️ Configuration</h2>
+  <div class="card">
+    <p>Config file: <span class="tuto-cmd">~/.gitpulse/config.json</span></p>
+    <p style="margin-top:10px">Available settings:</p>
+    <table style="margin-top:10px">
+      <tr><th>Key</th><th>Default</th><th>Description</th></tr>
+      <tr><td>token</td><td>—</td><td>GitHub personal access token</td></tr>
+      <tr><td>mode</td><td>advanced</td><td>beginner or advanced</td></tr>
+      <tr><td>language</td><td>en</td><td>en, fr, or ar</td></tr>
+      <tr><td>web_theme</td><td>masjid</td><td>masjid, andalus, alhamra, nur, raqsh, sahra, zahra</td></tr>
+      <tr><td>web_port</td><td>5000</td><td>Port for web server</td></tr>
+      <tr><td>web_host</td><td>127.0.0.1</td><td>Bind address</td></tr>
+      <tr><td>web_auto_open</td><td>true</td><td>Auto-open browser on --web</td></tr>
+      <tr><td>clone_directory</td><td>~/repos</td><td>Default clone destination</td></tr>
+      <tr><td>commits_count</td><td>10</td><td>Default commits to show</td></tr>
+      <tr><td>default_sort</td><td>updated</td><td>Repo sort order</td></tr>
+      <tr><td>default_direction</td><td>desc</td><td>Sort direction</td></tr>
+      <tr><td>default_repo_type</td><td>all</td><td>Filter: all, public, private</td></tr>
+    </table>
+  </div>
+</div>
+
+{{include footer.html}}

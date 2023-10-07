@@ -1,0 +1,35 @@
+{{include header.html}}
+<h2>🏺 Git Archaeology</h2>
+<div class="card">
+  <label>Select repo:
+    <select id="repo-input"><option value="">Loading repos...</option></select>
+  </label>
+  <button onclick="dig()">🔍 Dig</button>
+</div>
+<div id="results"></div>
+<script>
+fetch('/api/repos').then(r=>r.json()).then(d=>{
+  const s=document.getElementById('repo-input');
+  s.innerHTML='<option value="">— pick a repo —</option>';
+  (d.repos||d||[]).forEach(r=>{s.innerHTML+=`<option value="${r.name}">${r.name}</option>`});
+});
+async function dig() {
+  const n = document.getElementById('repo-input').value;
+  if (!n) return;
+  document.getElementById('results').innerHTML = '<p>Digging...</p>';
+  const r = await fetch('/api/archaeology/' + n);
+  const d = await r.json();
+  let h = '<div class="card"><h3>Dead Branches (&gt;6 months)</h3>';
+  if (d.dead_branches.length === 0) h += '<p>✅ None!</p>';
+  else d.dead_branches.forEach(b => { h += `<p>💀 <strong>${b.name}</strong> — ${b.age_days} days old</p>`; });
+  h += '</div><div class="card"><h3>Large Files (&gt;1MB)</h3>';
+  if (d.large_files.length === 0) h += '<p>✅ None!</p>';
+  else d.large_files.forEach(f => { h += `<p>📦 ${f.path} — ${f.size_kb} KB</p>`; });
+  h += '</div><div class="card"><h3>TODO/FIXME Comments</h3>';
+  if (d.todos.length === 0) h += '<p>✅ None!</p>';
+  else d.todos.forEach(t => { h += `<p>📝 <strong>${t.keyword}</strong> in ${t.file}</p>`; });
+  h += '</div>';
+  document.getElementById('results').innerHTML = h;
+}
+</script>
+{{include footer.html}}

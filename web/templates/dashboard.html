@@ -1,0 +1,41 @@
+{{include header.html}}
+<h2 data-i18n="page_dashboard">Dashboard</h2>
+{{if is_demo}}
+<div class="card" style="border-color:var(--accent);text-align:center;padding:14px">
+  ★ <strong>DEMO MODE</strong> — exploring with 17 sample repos · <a href="/tutorial">Read the Tutorial</a>
+</div>
+{{endif}}
+<div class="card-grid">
+  <div class="card stat-box">
+    <div class="stat-value">{{total}}</div>
+    <div class="stat-label" data-i18n="total_repos">Total Repos</div>
+  </div>
+  <div class="card stat-box">
+    <div class="stat-value">{{public}}</div>
+    <div class="stat-label">Public</div>
+  </div>
+  <div class="card stat-box">
+    <div class="stat-value">{{private}}</div>
+    <div class="stat-label">Private</div>
+  </div>
+  <div class="card stat-box">
+    <div class="stat-value">{{stars}}</div>
+    <div class="stat-label" data-i18n="total_stars">Total Stars</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 data-i18n="recent_repos">Recent Repos</h3>
+  <table>
+    <tr><th data-i18n="col_name">Name</th><th data-i18n="col_visibility">Visibility</th><th data-i18n="col_language">Language</th><th data-i18n="col_updated">Updated</th></tr>
+    {{for repo in recent}}
+    <tr>
+      <td><a href="/repo/{{repo.name}}">{{repo.name}}</a> <a href="/repo/{{repo.name}}/files" style="font-size:.7rem;opacity:.4" title="Browse files">📁</a></td>
+      <td>{{repo.private}}</td>
+      <td>{{repo.language}}</td>
+      <td>{{repo.updated_at}}</td>
+    </tr>
+    {{endfor}}
+  </table>
+</div>
+{{include footer.html}}

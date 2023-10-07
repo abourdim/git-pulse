@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse - README</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Home</a><a href="readme.html" class="active">README</a><a href="install.html">Install</a>
+    <a href="howto.html">How-To</a><a href="faq.html">FAQ</a><a href="commands.html">Commands</a>
+    <a href="webui.html">Web UI</a><a href="themes.html">Themes</a><a href="config.html">Config</a>
+  </nav>
+</div>
+<div class="doc-wrap">
+<h1>GitPulse v6.0 - Noor</h1>
+<p><strong>The complete GitHub repository manager - CLI + Web UI</strong><br>
+Powered by <a href="http://workshop-diy.org">workshop-diy.org</a></p>
+
+<h2>Quick Start</h2>
+<pre><code>bash gitpulse.sh                    # Install
+python gitpulse.py                  # CLI mode
+python gitpulse.py --web            # Web UI
+python gitpulse.py --demo           # Demo (no token)
+python gitpulse.py --web --demo     # Web demo</code></pre>
+<p>Only dependency: <code>requests</code> - Python 3.8+</p>
+
+<h2>Features (29 CLI + 23 Web Pages)</h2>
+<table>
+<tr><th>Category</th><th>#</th><th>Features</th></tr>
+<tr><td>Repos</td><td>1-7</td><td>List, Search, Details, Create, Delete, Edit, Clone</td></tr>
+<tr><td>Git Info</td><td>8-9</td><td>Commits, Branches</td></tr>
+<tr><td>Power Tools</td><td>10-12</td><td>Backup, Health Dashboard, Bulk Operations</td></tr>
+<tr><td>Git Deep</td><td>13-14</td><td>Interactive Git Log, Cross-Repo Search</td></tr>
+<tr><td>DevOps</td><td>15-16</td><td>Actions Monitor, Release Manager</td></tr>
+<tr><td>Toolkit</td><td>17-19</td><td>Repo Templates, SSH Keys, Timestamp Editor</td></tr>
+<tr><td>Insights</td><td>20-21</td><td>Analytics and Traffic, Dependency Scanner</td></tr>
+<tr><td>AI</td><td>22</td><td>AI Summaries + Magic Diff Storyteller</td></tr>
+<tr><td>Sentinel</td><td>23-25</td><td>Danger Zone, Git Archaeology, Smart Grouper</td></tr>
+<tr><td>Rhythm</td><td>26-27</td><td>Commit Rhythm Analyzer, Multi-Account</td></tr>
+<tr><td>-</td><td>28-29</td><td>Quick Stats, Settings</td></tr>
+</table>
+
+<h3>Web-Only Features</h3>
+<table>
+<tr><th>Feature</th><th>URL</th></tr>
+<tr><td><strong>File Workspace</strong></td><td>/repo/{name}/files — IDE: browse, edit, upload, syntax-highlighted viewer, genius tools</td></tr>
+<tr><td>Time Machine</td><td>/timemachine/{name}</td></tr>
+<tr><td>DNA Fingerprint</td><td>/dna</td></tr>
+<tr><td>Repo Graph</td><td>/graph</td></tr>
+<tr><td>Live Radar</td><td>/radar</td></tr>
+<tr><td>Voice Control</td><td>/voice</td></tr>
+<tr><td>Ambient Dashboard</td><td>/ambient</td></tr>
+</table>
+
+<h2>7 Islamic Art Themes</h2>
+<p>Masjid (default, dark) - Andalus (dark) - Al-Hamra (dark) - Nur (light) - Raqsh (light) - Sahra (dark) - Zahra (dark)</p>
+<p>Clickable swatches in Settings — persists via localStorage, no page reload needed.</p>
+
+<h2>3 Languages (i18n)</h2>
+<p>English - Français - العربية (full RTL)<br>
+89 translation keys · client-side JSON loader · live switching in Settings<br>
+Beginner (8 items) - Advanced (29 items)</p>
+
+<h2>Syntax Highlighting</h2>
+<p>15+ languages: Python, JS/TS, C/C++, Go, Rust, Ruby, Java, Shell, SQL, HTML, CSS, YAML, TOML, Dockerfile.<br>
+Tokenizer-based — strings and comments never bleed into keywords.</p>
+
+<h2>Demo Mode</h2>
+<p>17 sample repos. All features work with mock data. No token needed.</p>
+
+<h2>Project Structure</h2>
+<pre><code>gitpulse/                         78 files
+  gitpulse.py                     Entry (CLI + --web + --demo)
+  gitpulse.sh                     Installer (auto-alias, one-step)
+  README.md                       Documentation
+  ROADMAP.md                      Dev history
+  docs/                           HTML documentation (10 pages)
+  lib/                            25 Python modules
+  web/                            Server + 23 templates + CSS + JS
+    static/i18n/                  Translation files (en/fr/ar)
+    static/js/i18n.js             Translation loader
+  portable/                       USB mode (run.bat + run.sh)</code></pre>
+
+<h2>Requirements</h2>
+<p>Python 3.8+ - <code>requests</code> - GitHub token - Optional: <code>openai</code></p>
+
+<h2>License</h2>
+<p>MIT</p>
+
+<div class="doc-footer">
+  <a href="index.html">Back to Docs</a>
+</div>
+</div>
+</body>
+</html>

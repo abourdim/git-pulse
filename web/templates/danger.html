@@ -1,0 +1,38 @@
+{{include header.html}}
+<h2>🛡️ <span data-i18n="page_security">Danger Zone — Security Scanner</span></h2>
+<div class="card">
+  <label>Select repo:
+    <select id="repo-input"><option value="">Loading repos...</option></select>
+  </label>
+  <button onclick="scanRepo()">🔍 Scan</button>
+</div>
+<div id="results"></div>
+<script>
+fetch('/api/repos').then(r=>r.json()).then(d=>{
+  const s=document.getElementById('repo-input');
+  s.innerHTML='<option value="">— pick a repo —</option>';
+  (d.repos||d||[]).forEach(r=>{s.innerHTML+=`<option value="${r.name}">${r.name}</option>`});
+});
+async function scanRepo() {
+  const n = document.getElementById('repo-input').value;
+  if (!n) return;
+  document.getElementById('results').innerHTML = '<p>Scanning... (this may take a moment)</p>';
+  const r = await fetch('/api/danger/' + n);
+  const d = await r.json();
+  let h = '<div class="card"><h3>Risk Indicators</h3>';
+  for (const [k, v] of Object.entries(d.risks || {})) {
+    h += `<p>${v ? '🔴' : '🟢'} ${k.replace(/_/g, ' ')}: ${v ? 'RISK' : 'OK'}</p>`;
+  }
+  h += '</div><div class="card"><h3>Secret Scan</h3>';
+  if (!d.secrets || d.secrets.length === 0) {
+    h += '<p>🟢 No leaked secrets found!</p>';
+  } else {
+    d.secrets.forEach(s => {
+      h += `<p>🔴 <strong>${s.file}</strong>: ${s.type} (${s.count}x)</p>`;
+    });
+  }
+  h += '</div>';
+  document.getElementById('results').innerHTML = h;
+}
+</script>
+{{include footer.html}}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — Configuration</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Home</a><a href="readme.html">README</a><a href="install.html">Install</a>
+    <a href="howto.html">How-To</a><a href="faq.html">FAQ</a><a href="commands.html">Commands</a>
+    <a href="webui.html">Web UI</a><a href="themes.html">Themes</a><a href="config.html" class="active">Config</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Configuration</h1>
+
+<h2>Config File</h2>
+<p>Location: <code>~/.gitpulse/config.json</code></p>
+<p>Created on first run. Permissions set to <code>chmod 600</code>.</p>
+<pre><code>{
+  "token": "ghp_your_token_here",
+  "mode": "advanced",
+  "language": "en",
+  "web_theme": "masjid",
+  "web_port": 5000,
+  "web_host": "127.0.0.1",
+  "web_auto_open": true,
+  "clone_directory": "~/repos",
+  "commits_count": 10,
+  "default_sort": "updated",
+  "default_direction": "desc",
+  "default_repo_type": "all"
+}</code></pre>
+
+<h2>All Settings</h2>
+<table>
+  <tr><th>Key</th><th>Type</th><th>Default</th><th>Values</th><th>Description</th></tr>
+  <tr><td><code>token</code></td><td>string</td><td>—</td><td><code>ghp_...</code></td><td>GitHub personal access token</td></tr>
+  <tr><td><code>mode</code></td><td>string</td><td><code>advanced</code></td><td><code>beginner</code>, <code>advanced</code></td><td>UI mode (8 vs 29 items)</td></tr>
+  <tr><td><code>language</code></td><td>string</td><td><code>en</code></td><td><code>en</code>, <code>fr</code>, <code>ar</code></td><td>Interface language</td></tr>
+  <tr><td><code>web_theme</code></td><td>string</td><td><code>masjid</code></td><td>7 theme names</td><td>Web UI color theme</td></tr>
+  <tr><td><code>web_port</code></td><td>int</td><td><code>5000</code></td><td>Any port</td><td>Web server port</td></tr>
+  <tr><td><code>web_host</code></td><td>string</td><td><code>127.0.0.1</code></td><td>IP address</td><td>Bind address. <code>0.0.0.0</code> for LAN</td></tr>
+  <tr><td><code>web_auto_open</code></td><td>bool</td><td><code>true</code></td><td><code>true</code>, <code>false</code></td><td>Auto-open browser</td></tr>
+  <tr><td><code>clone_directory</code></td><td>string</td><td><code>~/repos</code></td><td>Any path</td><td>Default clone destination</td></tr>
+  <tr><td><code>commits_count</code></td><td>int</td><td><code>10</code></td><td>1–100</td><td>Commits shown by default</td></tr>
+  <tr><td><code>default_sort</code></td><td>string</td><td><code>updated</code></td><td><code>updated</code>, <code>created</code>, <code>full_name</code></td><td>Repo sort order</td></tr>
+  <tr><td><code>default_direction</code></td><td>string</td><td><code>desc</code></td><td><code>asc</code>, <code>desc</code></td><td>Sort direction</td></tr>
+  <tr><td><code>default_repo_type</code></td><td>string</td><td><code>all</code></td><td><code>all</code>, <code>public</code>, <code>private</code></td><td>Repo filter</td></tr>
+</table>
+
+<h2>Multi-Account File</h2>
+<p>Location: <code>~/.gitpulse/accounts.json</code></p>
+<p>Created when you add your first account via CLI option 27.</p>
+<pre><code>{
+  "active": "personal",
+  "accounts": {
+    "personal": {
+      "token": "ghp_personal_token",
+      "username": "my-username"
+    },
+    "work": {
+      "token": "ghp_work_token",
+      "username": "work-account"
+    }
+  }
+}</code></pre>
+<p>File permissions: <code>chmod 600</code>. No limit on accounts.</p>
+
+<h2>Environment Variables</h2>
+<table>
+  <tr><th>Variable</th><th>Description</th></tr>
+  <tr><td><code>GITHUB_TOKEN</code></td><td>Alternative to storing token in config file</td></tr>
+  <tr><td><code>GHM_CONFIG</code></td><td>Override config directory (used by portable mode)</td></tr>
+  <tr><td><code>OPENAI_API_KEY</code></td><td>For AI summaries feature (optional)</td></tr>
+</table>
+
+<h2>Portable Mode Config</h2>
+<p>When running from USB via <code>portable/run.bat</code> or <code>run.sh</code>:</p>
+<ul>
+  <li><code>GHM_CONFIG</code> is set to <code>portable/config/</code> on the USB</li>
+  <li>Config, accounts, and tokens stored on the USB drive</li>
+  <li>Nothing written to the host machine</li>
+</ul>
+
+<h2>Client-Side Persistence (v3.0+)</h2>
+<p>The Web UI uses <strong>dual persistence</strong> for theme, language, and mode:</p>
+<table>
+  <tr><th>Storage</th><th>Keys</th><th>Purpose</th></tr>
+  <tr><td><code>localStorage</code></td><td><code>gp_theme</code>, <code>gp_language</code>, <code>gp_mode</code>, <code>gp_sort</code></td><td>Instant apply — no page reload, no flash</td></tr>
+  <tr><td><code>config.json</code></td><td><code>web_theme</code>, <code>language</code>, <code>mode</code></td><td>Server-side fallback. Synced via POST /api/settings</td></tr>
+</table>
+<p>localStorage takes priority. If cleared, falls back to server config.</p>
+
+<h2>Troubleshooting Config</h2>
+<table>
+  <tr><th>Problem</th><th>Solution</th></tr>
+  <tr><td>Config not saving</td><td>Check write permissions: <code>ls -la ~/.gitpulse/</code></td></tr>
+  <tr><td>Token not found</td><td>Check <code>cat ~/.gitpulse/config.json</code> or <code>echo $GITHUB_TOKEN</code></td></tr>
+  <tr><td>Port in use</td><td>Change <code>"web_port"</code> to 8080 or another free port</td></tr>
+  <tr><td>Reset everything</td><td><code>rm -rf ~/.gitpulse/</code> then re-run (wizard will re-appear)</td></tr>
+</table>
+
+<div class="doc-footer">
+  <a href="index.html">← Back to Docs</a>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — CLI Commands</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="readme.html">README</a>
+    <a href="install.html">Install</a>
+    <a href="howto.html">How-To</a>
+    <a href="faq.html">FAQ</a>
+    <a href="commands.html" class="active">Commands</a>
+    <a href="webui.html">Web UI</a>
+    <a href="themes.html">Themes</a>
+    <a href="config.html">Config</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>CLI Commands Reference</h1>
+
+<h2>Launch Commands</h2>
+<table>
+  <tr><th>Command</th><th>Description</th></tr>
+  <tr><td><code>python gitpulse.py</code></td><td>Start CLI interactive mode</td></tr>
+  <tr><td><code>python gitpulse.py --web</code></td><td>Start web UI server</td></tr>
+  <tr><td><code>python gitpulse.py --demo</code></td><td>CLI with demo data (no token)</td></tr>
+  <tr><td><code>python gitpulse.py --web --demo</code></td><td>Web UI with demo data</td></tr>
+  <tr><td><code>bash gitpulse.sh</code></td><td>Run the installer</td></tr>
+  <tr><td><code>gp</code></td><td>Alias (created by installer)</td></tr>
+</table>
+
+<h2>Menu Commands — Advanced Mode (29)</h2>
+
+<h3>📦 REPOS</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>1</td><td>List repos</td><td>View all repositories. Sort by name/date/stars. Filter by public/private/all. Shows visibility badge, language, stars, last push.</td><td><span class="badge badge-web">✓ /repos</span></td></tr>
+  <tr><td>2</td><td>Search repos</td><td>Search by name, description, topic, or language across all repos.</td><td><span class="badge badge-web">✓ /repos</span></td></tr>
+  <tr><td>3</td><td>Repo details</td><td>Full view of one repo: language breakdown (%), recent commits, branches, clone URL, topics, license, dates.</td><td><span class="badge badge-web">✓ /repo/{n}</span></td></tr>
+  <tr><td>4</td><td>Create repo</td><td>Create new repo with name, description, visibility, auto-init README.</td><td><span class="badge badge-web">✓ POST</span></td></tr>
+  <tr><td>5</td><td>Delete repo</td><td>Permanent delete. Double confirmation (type name). Requires <code>delete_repo</code> scope.</td><td>—</td></tr>
+  <tr><td>6</td><td>Edit repo</td><td>Change name, description, visibility, topics, default branch, homepage URL, wiki, issues, archived status.</td><td><span class="badge badge-web">✓ /repo/{n}</span></td></tr>
+  <tr><td>7</td><td>Clone repo</td><td>Clone any repo to local directory via <code>git clone</code>.</td><td>—</td></tr>
+</table>
+
+<h3>🔀 GIT INFO</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>8</td><td>View commits</td><td>Recent commits: SHA (short), message, author, date. Configurable count.</td><td><span class="badge badge-web">✓ /repo/{n}</span></td></tr>
+  <tr><td>9</td><td>View branches</td><td>All branches with protection status. Shows default branch.</td><td><span class="badge badge-web">✓ /repo/{n}</span></td></tr>
+</table>
+
+<h3>⚡ POWER TOOLS</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>10</td><td>Backup manager</td><td>Clone ALL repos to a folder. Optionally compress to timestamped .zip archive.</td><td><span class="badge badge-web">✓ /backup</span></td></tr>
+  <tr><td>11</td><td>Health dashboard</td><td>Score every repo 0-100% on: README, LICENSE, .gitignore, description, topics.</td><td><span class="badge badge-web">✓ /health</span></td></tr>
+  <tr><td>12</td><td>Bulk operations</td><td>Mass rename, toggle visibility, bulk delete, add/remove topics across multiple repos.</td><td>—</td></tr>
+</table>
+
+<h3>🔬 GIT DEEP</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>13</td><td>Interactive git log</td><td>Rich log with graph view, color-coded branches, author and date filters. Navigate with keyboard.</td><td>—</td></tr>
+  <tr><td>14</td><td>Cross-repo search</td><td>Search code, filenames, commits, or issues across ALL repos using GitHub Search API.</td><td>—</td></tr>
+</table>
+
+<h3>🚀 DEVOPS</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>15</td><td>Actions monitor</td><td>View GitHub Actions workflow runs: status (pass/fail/running), duration, trigger event, branch.</td><td>—</td></tr>
+  <tr><td>16</td><td>Release manager</td><td>Create git tags, create releases with notes, upload release assets (.zip, .bin, .tar.gz).</td><td>—</td></tr>
+</table>
+
+<h3>🛠️ TOOLKIT</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>17</td><td>Repo templates</td><td>Create repos from boilerplates: Python package, Node.js app, ESP32 firmware, Static website. Auto-generates README, .gitignore, LICENSE.</td><td>—</td></tr>
+  <tr><td>18</td><td>SSH key manager</td><td>Generate ed25519 SSH key pair, upload public key to GitHub, test SSH connection.</td><td>—</td></tr>
+  <tr><td>19</td><td>Timestamp editor</td><td>View commit author_date/commit_date. Shift by hours/days. Randomize across business hours. <em>Rewrites history.</em></td><td>—</td></tr>
+</table>
+
+<h3>📊 INSIGHTS</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>20</td><td>Analytics & traffic</td><td>14-day view counts, unique visitors, clone counts, top referrers. Requires push access.</td><td><span class="badge badge-web">✓ /analytics</span></td></tr>
+  <tr><td>21</td><td>Dependency scanner</td><td>Scan requirements.txt, package.json, Cargo.toml. Detect outdated or vulnerable packages.</td><td>—</td></tr>
+</table>
+
+<h3>🤖 AI / SUMMARY</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>22</td><td>AI summaries</td><td>Sub-menu: (a) AI Summary — OpenAI optional. (b) Magic Diff Storyteller — pattern-based, no API.</td><td>—</td></tr>
+</table>
+
+<h3>🛡️ SENTINEL</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>23</td><td>Danger zone</td><td>Secret scanner (14 patterns) + risk indicators (no .gitignore, public+no license, >500MB, unprotected branch).</td><td><span class="badge badge-web">✓ /danger</span></td></tr>
+  <tr><td>24</td><td>Git archaeology</td><td>Dead branches (6+ months), large files (>1MB), TODO/FIXME/HACK/XXX in code, stale PRs (90+ days), empty repos.</td><td><span class="badge badge-web">✓ /archaeology</span></td></tr>
+  <tr><td>25</td><td>Smart grouper</td><td>Auto-categorize repos into 10 types (Web, Mobile, IoT, API, Library, ML, DevOps, Docs, Learning, Tool).</td><td><span class="badge badge-web">✓ /grouper</span></td></tr>
+</table>
+
+<h3>💓 RHYTHM</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>26</td><td>Commit rhythm</td><td>Analyze coding patterns: peak hour, morning/evening %, weekday split, burst days, style profile.</td><td><span class="badge badge-web">✓ /rhythm</span></td></tr>
+  <tr><td>27</td><td>Multi-account</td><td>Add/switch/remove GitHub accounts with labels. Tokens in <code>~/.gitpulse/accounts.json</code>.</td><td>—</td></tr>
+</table>
+
+<h3>—</h3>
+<table>
+  <tr><th>#</th><th>Name</th><th>Description</th><th>Web?</th></tr>
+  <tr><td>28</td><td>Quick stats</td><td>Account overview: username, public/private counts, total repos, followers, following.</td><td><span class="badge badge-web">✓ / (dashboard)</span></td></tr>
+  <tr><td>29</td><td>Settings</td><td>Change language, mode, theme, default sort, clone directory, commits count.</td><td><span class="badge badge-web">✓ /settings</span></td></tr>
+</table>
+
+<h2>Beginner Mode (8 items)</h2>
+<table>
+  <tr><th>#</th><th>Label</th><th>Maps to</th></tr>
+  <tr><td>1</td><td>View my projects</td><td>List repos</td></tr>
+  <tr><td>2</td><td>Search projects</td><td>Search repos</td></tr>
+  <tr><td>3</td><td>Project details</td><td>Repo details</td></tr>
+  <tr><td>4</td><td>Create a project</td><td>Create repo</td></tr>
+  <tr><td>5</td><td>Edit a project</td><td>Edit repo</td></tr>
+  <tr><td>6</td><td>Download a project</td><td>Clone repo</td></tr>
+  <tr><td>7</td><td>Quick overview</td><td>Quick stats</td></tr>
+  <tr><td>8</td><td>Settings</td><td>Settings</td></tr>
+</table>
+
+<div class="doc-footer">
+  <a href="index.html">← Back to Docs</a> · <a href="webui.html">Web UI →</a>
+</div>
+</div>
+</body>
+</html>

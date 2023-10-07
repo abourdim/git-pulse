@@ -1,0 +1,102 @@
+{{include header.html}}
+<h2>🕸️ Repo Relationship Graph</h2>
+<div class="card"><button onclick="loadGraph()">🔄 Load Graph</button></div>
+<div class="card" id="graph-container" style="height:500px;position:relative;overflow:hidden">
+  <canvas id="graph-canvas" style="width:100%;height:100%"></canvas>
+</div>
+<script>
+async function loadGraph() {
+  const r = await fetch('/api/graph');
+  const d = await r.json();
+  const canvas = document.getElementById('graph-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = 500;
+
+  const nodes = d.nodes || [];
+  const links = d.links || [];
+  const colors = {"JavaScript":"#f7df1e","Python":"#3776ab","TypeScript":"#3178c6","HTML":"#e34c26",
+    "CSS":"#563d7c","Java":"#b07219","C++":"#f34b7d","C":"#555","Go":"#00add8","Rust":"#dea584",
+    "Shell":"#89e051","Ruby":"#701516","PHP":"#4f5d95","Other":"#888"};
+
+  // Simple force layout
+  nodes.forEach((n, i) => {
+    n.x = 100 + Math.random() * (canvas.width - 200);
+    n.y = 100 + Math.random() * 300;
+    n.vx = 0; n.vy = 0;
+  });
+
+  function simulate() {
+    // Repulsion
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        let dx = nodes[j].x - nodes[i].x, dy = nodes[j].y - nodes[i].y;
+        let dist = Math.sqrt(dx*dx + dy*dy) || 1;
+        let force = 500 / (dist * dist);
+        nodes[i].vx -= dx / dist * force;
+        nodes[i].vy -= dy / dist * force;
+        nodes[j].vx += dx / dist * force;
+        nodes[j].vy += dy / dist * force;
+      }
+    }
+    // Attraction (links)
+    const nodeMap = {};
+    nodes.forEach(n => nodeMap[n.id] = n);
+    links.forEach(l => {
+      const a = nodeMap[l.source], b = nodeMap[l.target];
+      if (!a || !b) return;
+      let dx = b.x - a.x, dy = b.y - a.y;
+      let dist = Math.sqrt(dx*dx + dy*dy) || 1;
+      let force = (dist - 80) * 0.01;
+      a.vx += dx / dist * force;
+      a.vy += dy / dist * force;
+      b.vx -= dx / dist * force;
+      b.vy -= dy / dist * force;
+    });
+    // Center gravity
+    nodes.forEach(n => {
+      n.vx += (canvas.width/2 - n.x) * 0.001;
+      n.vy += (canvas.height/2 - n.y) * 0.001;
+      n.vx *= 0.9; n.vy *= 0.9;
+      n.x += n.vx; n.y += n.vy;
+      n.x = Math.max(20, Math.min(canvas.width - 20, n.x));
+      n.y = Math.max(20, Math.min(canvas.height - 20, n.y));
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Links
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    const nodeMap = {};
+    nodes.forEach(n => nodeMap[n.id] = n);
+    links.forEach(l => {
+      const a = nodeMap[l.source], b = nodeMap[l.target];
+      if (!a || !b) return;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    });
+    // Nodes
+    nodes.forEach(n => {
+      const r = 6 + Math.sqrt(n.stars) * 2;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = colors[n.language] || colors.Other;
+      ctx.fill();
+      ctx.fillStyle = 'white';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(n.id.length > 12 ? n.id.slice(0,10)+'..' : n.id, n.x, n.y + r + 12);
+    });
+  }
+
+  let frame = 0;
+  function loop() {
+    simulate();
+    draw();
+    if (frame++ < 200) requestAnimationFrame(loop);
+  }
+  loop();
+}
+</script>
+{{include footer.html}}

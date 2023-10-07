@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — FAQ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="readme.html">README</a>
+    <a href="install.html">Install</a>
+    <a href="howto.html">How-To</a>
+    <a href="faq.html" class="active">FAQ</a>
+    <a href="commands.html">Commands</a>
+    <a href="webui.html">Web UI</a>
+    <a href="themes.html">Themes</a>
+    <a href="config.html">Config</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Frequently Asked Questions</h1>
+
+<h2>General</h2>
+
+<div class="faq-item">
+  <div class="faq-q">Q: What is GitPulse?</div>
+  <div class="faq-a">A GitHub repository manager with a CLI (29 commands) and a Web UI (23 pages). It lets you manage, analyze, secure, and visualize all your GitHub repos from one place.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: What Python version do I need?</div>
+  <div class="faq-a">Python 3.8 or newer. Tested on 3.8, 3.9, 3.10, 3.11, and 3.12.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: What are the dependencies?</div>
+  <div class="faq-a">Only <code>requests</code>. Everything else is Python standard library. Optional: <code>openai</code> (only for AI summaries feature).</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Does it work on Windows?</div>
+  <div class="faq-a">Yes — MSYS2, Git Bash, WSL, and native Windows cmd/PowerShell all work. The portable mode uses <code>run.bat</code> for easy launch.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Does it work on macOS?</div>
+  <div class="faq-a">Yes. Install Python 3.8+ via Homebrew or the official installer, then run normally.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Can I use GitPulse without a GitHub account?</div>
+  <div class="faq-a">Yes — demo mode. Run <code>python gitpulse.py --demo</code> or click "Try Demo" in the web UI. 17 sample repos, all features work with mock data.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Does it work offline?</div>
+  <div class="faq-a">Demo mode works fully offline. For real GitHub data, you need internet access to <code>api.github.com</code>.</div>
+</div>
+
+<h2>Security & Privacy</h2>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Is my token secure?</div>
+  <div class="faq-a">Stored in <code>~/.gitpulse/config.json</code> with <code>chmod 600</code> (owner-only read/write). Never sent anywhere except <code>api.github.com</code>. Never logged, cached, or shared. For higher security, use environment variables instead.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Are my account tokens encrypted?</div>
+  <div class="faq-a">Not encrypted at rest, but protected by file permissions (<code>chmod 600</code>). For production environments, consider a secrets manager or environment variables.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Does GitPulse modify my repos?</div>
+  <div class="faq-a">Only when you explicitly use write actions: create, delete, edit, timestamp shift, or release creation. Read-only operations (list, search, health, analytics, scan) never modify anything.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Does the secret scanner upload my code?</div>
+  <div class="faq-a">No. It reads files via the GitHub API (your files are already on GitHub). Nothing is sent to any third party.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: What secrets can the Danger Zone detect?</div>
+  <div class="faq-a">14 patterns: GitHub tokens (ghp_, gho_), AWS access/secret keys, Slack tokens and webhooks, private keys (RSA/DSA/EC), generic API keys and passwords, Heroku API keys, Sendgrid keys, Twilio keys, Google API keys, Stripe live/test keys.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Can I expose the web UI to the internet?</div>
+  <div class="faq-a">Not recommended. GitPulse has no authentication on the web UI — it's designed for local or LAN use. If you need remote access, put it behind a reverse proxy (Nginx, Caddy) with proper authentication.</div>
+</div>
+
+<h2>Web UI</h2>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Why does the web server not start?</div>
+  <div class="faq-a">Usually port 5000 is in use. Change it in <code>~/.gitpulse/config.json</code>: <code>"web_port": 8080</code>. On macOS, AirPlay Receiver uses port 5000 by default.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Why is Voice Control not working?</div>
+  <div class="faq-a">Voice requires Chrome or Edge. Firefox and Safari don't support the Web Speech API. On Chrome, it works on localhost without HTTPS.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: How do I change themes?</div>
+  <div class="faq-a">Settings page → select theme → Save. Or edit config: <code>"web_theme": "andalus"</code>. Seven themes available — see <a href="themes.html">Themes</a>.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Can I auto-start the web UI?</div>
+  <div class="faq-a">Add <code>python /path/to/gitpulse.py --web</code> to your startup scripts, cron (<code>@reboot</code>), systemd service, or Windows Task Scheduler.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: The web page is blank / broken</div>
+  <div class="faq-a">Check the terminal for Python errors. Clear browser cache. Try a different browser. Verify all template files exist in <code>web/templates/</code>.</div>
+</div>
+
+<h2>Features</h2>
+
+<div class="faq-item">
+  <div class="faq-q">Q: What's the difference between Beginner and Advanced mode?</div>
+  <div class="faq-a">Beginner shows 8 safe items with friendly labels ("projects" instead of "repos"). Advanced shows all 29 commands with technical terminology. Dangerous features (delete, bulk ops) are hidden in beginner mode. Switch anytime from Settings.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: How many accounts can I add?</div>
+  <div class="faq-a">No limit. Each gets a label (e.g., "personal", "work", "client-x").</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Does switching accounts affect my local git config?</div>
+  <div class="faq-a">No. GitPulse only changes the API token for GitHub REST calls. Your local <code>.gitconfig</code> and SSH settings are untouched.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Why do some analytics return empty data?</div>
+  <div class="faq-a">GitHub traffic API requires push access to the repo. If you're a collaborator without push access, traffic data won't be available.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Does the AI summary require OpenAI?</div>
+  <div class="faq-a">The "Magic Diff Storyteller" uses pure pattern matching — no API needed. The "AI Summary" feature uses OpenAI's API (requires <code>pip install openai</code> and an API key). Both are in menu option 22.</div>
+</div>
+
+<h2>Demo Mode</h2>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Can I break anything in demo mode?</div>
+  <div class="faq-a">No. All data is fake and lives in memory. Creating or deleting repos only affects the current session. Everything resets on restart.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Do analytics show real data in demo?</div>
+  <div class="faq-a">No. All numbers are randomly generated mock data. Real analytics require a connected GitHub account with push access.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: How do I exit demo mode and connect a real account?</div>
+  <div class="faq-a">Restart GitPulse without the <code>--demo</code> flag. In the web UI, go to <code>/settings</code> (when implemented) or restart the server.</div>
+</div>
+
+<h2>Limits & Performance</h2>
+
+<div class="faq-item">
+  <div class="faq-q">Q: What's the GitHub API rate limit?</div>
+  <div class="faq-a">5,000 requests/hour for authenticated users. Most GitPulse operations use 1–5 requests. Heavy operations like health check (which checks every repo) or backup might use 50–200 requests depending on repo count.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: I got "rate limit exceeded" — what do I do?</div>
+  <div class="faq-a">Wait for the rate limit to reset (usually within an hour). Reduce scope of scans. Use cached/demo data while waiting.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: How many repos can GitPulse handle?</div>
+  <div class="faq-a">Tested with up to 200+ repos. The API returns paginated results (100 per page). Some features like health check may be slow with 100+ repos due to per-repo API calls.</div>
+</div>
+
+<h2>Troubleshooting</h2>
+
+<div class="faq-item">
+  <div class="faq-q">Q: "No module named requests"</div>
+  <div class="faq-a"><code>pip install requests</code> or <code>pip install requests --break-system-packages</code> (on newer Python).</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: "Permission denied" on config file</div>
+  <div class="faq-a"><code>chmod 600 ~/.gitpulse/config.json</code></div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: "Address already in use"</div>
+  <div class="faq-a">Port 5000 is taken. Set <code>"web_port": 8080</code> in <code>~/.gitpulse/config.json</code>.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Some features fail but token works</div>
+  <div class="faq-a">Check scopes at <a href="https://github.com/settings/tokens">github.com/settings/tokens</a>. Need: <code>repo</code>, <code>read:user</code>. Optional: <code>delete_repo</code>, <code>workflow</code>.</div>
+</div>
+
+<div class="faq-item">
+  <div class="faq-q">Q: Installer fails on MSYS2</div>
+  <div class="faq-a">Update MSYS2 first: <code>pacman -Syu && pacman -S python python-pip</code>, then re-run <code>bash gitpulse.sh</code>.</div>
+</div>
+
+<div class="doc-footer">
+  <a href="index.html">← Back to Docs</a> · <a href="commands.html">CLI Commands →</a>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{{include header.html}}
+<h2>💓 Commit Rhythm Analyzer</h2>
+<div class="card"><button onclick="analyze()">🔍 Analyze My Coding Rhythm</button></div>
+<div id="profile"></div>
+<script>
+async function analyze() {
+  document.getElementById('profile').innerHTML = '<p>Analyzing your commits across repos...</p>';
+  const r = await fetch('/api/rhythm');
+  const d = await r.json();
+  if (d.error) { document.getElementById('profile').innerHTML = '<p>'+d.error+'</p>'; return; }
+  let h = '<div class="card"><h3>Your Coding Profile</h3>';
+  h += `<p><strong>Style:</strong> ${d.style}</p>`;
+  h += `<p><strong>Total commits:</strong> ${d.total_commits}</p>`;
+  h += `<p><strong>Active days:</strong> ${d.active_days}</p>`;
+  h += `<p><strong>Avg per day:</strong> ${d.avg_per_day}</p>`;
+  h += `<p><strong>Peak hour:</strong> ${d.peak_hour}:00</p>`;
+  h += `<p><strong>Burst days (5+):</strong> ${d.burst_days}</p>`;
+  h += '</div><div class="card"><h3>Time Distribution</h3>';
+  const bars = [
+    ['Morning (6-12)', d.morning_pct],
+    ['Afternoon (12-18)', d.afternoon_pct],
+    ['Evening (18-24)', d.evening_pct],
+    ['Night (0-6)', d.night_pct],
+  ];
+  bars.forEach(([l, p]) => {
+    h += `<p>${l}: <span style="display:inline-block;background:var(--accent);height:12px;width:${p*2}px;border-radius:3px"></span> ${p}%</p>`;
+  });
+  h += '</div><div class="card"><h3>Weekday Activity</h3>';
+  for (const [day, count] of Object.entries(d.weekdays || {})) {
+    h += `<p>${day}: <span style="display:inline-block;background:var(--accent);height:12px;width:${count*5}px;border-radius:3px"></span> ${count}</p>`;
+  }
+  h += `<p><strong>Weekend coding:</strong> ${d.weekend_pct}%</p>`;
+  if (d.bimodal) h += '<p>🔄 <strong>Bimodal pattern detected!</strong> You code both morning & evening.</p>';
+  h += '</div>';
+  document.getElementById('profile').innerHTML = h;
+}
+</script>
+{{include footer.html}}

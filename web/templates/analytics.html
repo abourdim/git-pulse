@@ -1,0 +1,46 @@
+{{include header.html}}
+<h2>📊 <span data-i18n="page_analytics">Analytics &amp; Traffic</span></h2>
+<div class="card">
+  <label>Select repo:
+    <select id="repo-input"><option value="">Loading repos...</option></select>
+  </label>
+  <button onclick="loadAnalytics()">📈 Load</button>
+</div>
+<div id="analytics-data"></div>
+<script>
+fetch('/api/repos').then(r=>r.json()).then(d=>{
+  const s=document.getElementById('repo-input');
+  s.innerHTML='<option value="">— pick a repo —</option>';
+  (d.repos||d||[]).forEach(r=>{s.innerHTML+=`<option value="${r.name}">${r.name}</option>`});
+});
+async function loadAnalytics() {
+  const n = document.getElementById('repo-input').value;
+  if (!n) return;
+  document.getElementById('analytics-data').innerHTML = '<p>Loading traffic data...</p>';
+  const r = await fetch('/api/analytics/' + n);
+  const d = await r.json();
+  let h = '<div class="card"><h3>Views (14 days)</h3>';
+  const v = d.views || {};
+  h += `<p><strong>Total views:</strong> ${v.count || 0} | <strong>Unique:</strong> ${v.uniques || 0}</p>`;
+  if (v.views) {
+    h += '<div style="display:flex;align-items:flex-end;gap:4px;height:80px;margin-top:10px">';
+    const max = Math.max(...v.views.map(x => x.count), 1);
+    v.views.forEach(day => {
+      const pct = day.count / max * 100;
+      const date = day.timestamp.slice(5, 10);
+      h += `<div title="${date}: ${day.count}" style="flex:1;background:var(--accent);height:${pct}%;min-height:2px;border-radius:3px 3px 0 0"></div>`;
+    });
+    h += '</div>';
+  }
+  h += '</div><div class="card"><h3>Clones (14 days)</h3>';
+  const c = d.clones || {};
+  h += `<p><strong>Total clones:</strong> ${c.count || 0} | <strong>Unique:</strong> ${c.uniques || 0}</p>`;
+  h += '</div><div class="card"><h3>Top Referrers</h3>';
+  const refs = d.referrers || [];
+  if (refs.length === 0) h += '<p>No referrer data available.</p>';
+  else refs.forEach(ref => { h += `<p>${ref.referrer}: ${ref.count} views (${ref.uniques} unique)</p>`; });
+  h += '</div>';
+  document.getElementById('analytics-data').innerHTML = h;
+}
+</script>
+{{include footer.html}}

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — How-To Guides</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="readme.html">README</a>
+    <a href="install.html">Install</a>
+    <a href="howto.html" class="active">How-To</a>
+    <a href="faq.html">FAQ</a>
+    <a href="commands.html">Commands</a>
+    <a href="webui.html">Web UI</a>
+    <a href="themes.html">Themes</a>
+    <a href="config.html">Config</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>How-To Guides</h1>
+<p>Step-by-step instructions for every GitPulse feature.</p>
+
+<!-- TOC -->
+<h2>Contents</h2>
+<ul>
+  <li><a href="#first-run">First Run & Setup</a></li>
+  <li><a href="#demo">Try Demo Mode</a></li>
+  <li><a href="#list-repos">List & Search Repos</a></li>
+  <li><a href="#create-repo">Create a Repo</a></li>
+  <li><a href="#edit-repo">Edit a Repo</a></li>
+  <li><a href="#delete-repo">Delete a Repo</a></li>
+  <li><a href="#backup">Back Up All Repos</a></li>
+  <li><a href="#health">Check Repo Health</a></li>
+  <li><a href="#bulk">Bulk Operations</a></li>
+  <li><a href="#secrets">Find Leaked Secrets</a></li>
+  <li><a href="#archaeology">Clean Up Dead Branches & TODOs</a></li>
+  <li><a href="#grouper">Auto-Categorize Repos</a></li>
+  <li><a href="#rhythm">See Your Coding Patterns</a></li>
+  <li><a href="#analytics">View Traffic Analytics</a></li>
+  <li><a href="#accounts">Switch Between Accounts</a></li>
+  <li><a href="#templates">Create From Template</a></li>
+  <li><a href="#ssh">Set Up SSH Keys</a></li>
+  <li><a href="#timestamps">Edit Commit Timestamps</a></li>
+  <li><a href="#ai">Generate AI Summaries</a></li>
+  <li><a href="#theme">Change Theme</a></li>
+  <li><a href="#language">Change Language</a></li>
+  <li><a href="#voice">Use Voice Commands</a></li>
+  <li><a href="#ambient">Ambient Dashboard</a></li>
+  <li><a href="#timemachine">Use the Time Machine</a></li>
+  <li><a href="#dna">Generate DNA Fingerprint</a></li>
+  <li><a href="#graph">View Repo Graph</a></li>
+  <li><a href="#portable">Run From USB</a></li>
+  <li><a href="#lan">Expose on LAN</a></li>
+</ul>
+
+<!-- GUIDES -->
+
+<h2 id="first-run">First Run & Setup</h2>
+<div class="steps">
+  <div class="step">Run <code>python gitpulse.py</code></div>
+  <div class="step">Choose language: <strong>English</strong> / <strong>Français</strong> / <strong>العربية</strong></div>
+  <div class="step">Choose mode: <strong>🐣 Beginner</strong> (8 items, safe) or <strong>🔥 Advanced</strong> (29 items)</div>
+  <div class="step">Enter your GitHub token (<code>ghp_...</code>). Don't have one? <a href="install.html#token">Get a token</a> or type <code>demo</code></div>
+  <div class="step">GitPulse authenticates and shows the main menu. Done!</div>
+</div>
+<p>Settings are saved to <code>~/.gitpulse/config.json</code> — next launch skips the wizard.</p>
+
+<h2 id="demo">Try Demo Mode</h2>
+<p>No GitHub account needed. Four ways to activate:</p>
+<table>
+  <tr><th>Method</th><th>Command</th></tr>
+  <tr><td>CLI flag</td><td><code>python gitpulse.py --demo</code></td></tr>
+  <tr><td>Web flag</td><td><code>python gitpulse.py --web --demo</code></td></tr>
+  <tr><td>Token prompt</td><td>Type <code>demo</code> instead of a token</td></tr>
+  <tr><td>Web UI</td><td>Click <strong>★ Try Demo Mode</strong> on the welcome page</td></tr>
+</table>
+<p>17 sample repos with mock data for all features. Create/delete repos in-session (resets on restart).</p>
+
+<h2 id="list-repos">List & Search Repos</h2>
+<h3>CLI</h3>
+<div class="steps">
+  <div class="step">Select option <strong>1</strong> (List repos)</div>
+  <div class="step">Choose sort: updated / created / name</div>
+  <div class="step">Choose filter: all / public / private</div>
+  <div class="step">Repos displayed with 🔒/🌍 badges, language, stars, last push date</div>
+</div>
+<h3>Search</h3>
+<div class="steps">
+  <div class="step">Select option <strong>2</strong> (Search repos)</div>
+  <div class="step">Enter search term — matches name, description, topics, language</div>
+  <div class="step">Results shown instantly</div>
+</div>
+<h3>Web</h3>
+<p>Go to <code>/repos</code> — browse with search bar at top. Click any repo for details.</p>
+
+<h2 id="create-repo">Create a Repo</h2>
+<div class="steps">
+  <div class="step">Select option <strong>4</strong></div>
+  <div class="step">Enter repo name (e.g., <code>my-new-project</code>)</div>
+  <div class="step">Enter description (optional)</div>
+  <div class="step">Choose visibility: public or private</div>
+  <div class="step">Auto-init with README? (Y/n)</div>
+  <div class="step">Repo created on GitHub — URL shown</div>
+</div>
+
+<h2 id="edit-repo">Edit a Repo</h2>
+<p>Change any repo setting — available in both CLI and Web UI.</p>
+<div class="steps">
+  <div class="step">CLI: Select option <strong>6</strong> (Edit repo) — Web: open <code>/repo/{name}</code> and click <strong>✏️ Edit</strong></div>
+  <div class="step">Editable fields: name, description, visibility (public/private), topics, default branch, homepage URL, wiki (on/off), issues (on/off), archived (yes/no)</div>
+  <div class="step">CLI: leave blank to keep current value — Web: modify fields and click <strong>Save Changes</strong></div>
+  <div class="step">Topics use a separate GitHub API — they are updated alongside other fields automatically</div>
+</div>
+<p><strong>Note:</strong> Archiving a repo makes it read-only. Renaming a repo changes its URL.</p>
+
+<h2 id="delete-repo">Delete a Repo</h2>
+<p><strong>⚠️ Permanent and irreversible.</strong> Hidden in beginner mode.</p>
+<div class="steps">
+  <div class="step">Select option <strong>5</strong> (advanced mode only)</div>
+  <div class="step">Enter repo name</div>
+  <div class="step">Confirm by typing the full repo name again</div>
+  <div class="step">Repo permanently deleted from GitHub</div>
+</div>
+<p>Requires <code>delete_repo</code> scope on your token.</p>
+
+<h2 id="backup">Back Up All Repos</h2>
+<div class="steps">
+  <div class="step">Select option <strong>10</strong> (Backup manager)</div>
+  <div class="step">Choose destination folder (default: <code>~/repos</code>)</div>
+  <div class="step">GitPulse clones every repo into that folder</div>
+  <div class="step">Optional: compress to timestamped <code>.zip</code></div>
+</div>
+<p>Web: go to <code>/backup</code> and click Backup.</p>
+
+<h2 id="health">Check Repo Health</h2>
+<div class="steps">
+  <div class="step">Select option <strong>11</strong> (Health dashboard)</div>
+  <div class="step">Every repo is scanned for 5 checks:
+    <ul>
+      <li>✅ Has README.md</li>
+      <li>✅ Has LICENSE</li>
+      <li>✅ Has .gitignore</li>
+      <li>✅ Has description</li>
+      <li>✅ Has topics</li>
+    </ul>
+  </div>
+  <div class="step">Score 0–100% displayed per repo</div>
+</div>
+<p>Web: <code>/health</code> → click "Run Health Check" → see scores in a grid.</p>
+
+<h2 id="bulk">Bulk Operations</h2>
+<p>Advanced mode only (option <strong>12</strong>).</p>
+<ul>
+  <li><strong>Mass rename</strong>: rename multiple repos with a find/replace pattern</li>
+  <li><strong>Visibility toggle</strong>: flip public↔private for selected repos</li>
+  <li><strong>Bulk delete</strong>: delete multiple repos at once (triple-confirmed)</li>
+  <li><strong>Topic management</strong>: add/remove topics across many repos</li>
+</ul>
+
+<h2 id="secrets">Find Leaked Secrets</h2>
+<div class="steps">
+  <div class="step">Select option <strong>23</strong> (Danger zone)</div>
+  <div class="step">Choose "Scan for leaked secrets"</div>
+  <div class="step">Enter repo name</div>
+  <div class="step">GitPulse scans up to 50 files for <strong>14 secret patterns</strong>:
+    <table>
+      <tr><td>GitHub tokens</td><td><code>ghp_</code>, <code>gho_</code></td></tr>
+      <tr><td>AWS keys</td><td>Access keys, secret keys</td></tr>
+      <tr><td>Slack</td><td>Tokens (<code>xox</code>), webhooks</td></tr>
+      <tr><td>Private keys</td><td>RSA, DSA, EC</td></tr>
+      <tr><td>API keys</td><td>Generic <code>api_key=</code> patterns</td></tr>
+      <tr><td>Passwords</td><td>Generic <code>secret=</code>, <code>password=</code></td></tr>
+      <tr><td>Services</td><td>Heroku, Sendgrid, Twilio, Google, Stripe</td></tr>
+    </table>
+  </div>
+  <div class="step">Also checks risk indicators: missing .gitignore, public+no license, >500MB, unprotected branch</div>
+</div>
+<p>Web: <code>/danger</code> → enter repo name → click Scan.</p>
+
+<h2 id="archaeology">Clean Up Dead Branches & TODOs</h2>
+<div class="steps">
+  <div class="step">Select option <strong>24</strong> (Git archaeology)</div>
+  <div class="step">Choose what to find:
+    <ul>
+      <li><strong>Dead branches</strong>: no commits in 6+ months</li>
+      <li><strong>Large files</strong>: files >1MB</li>
+      <li><strong>TODOs</strong>: TODO, FIXME, HACK, XXX in code</li>
+      <li><strong>Stale PRs</strong>: open PRs older than 90 days</li>
+      <li><strong>Empty repos</strong>: repos with no content</li>
+    </ul>
+  </div>
+  <div class="step">Enter repo name → results displayed</div>
+</div>
+<p>Web: <code>/archaeology</code> → enter repo name → click Scan.</p>
+
+<h2 id="grouper">Auto-Categorize Repos</h2>
+<div class="steps">
+  <div class="step">Select option <strong>25</strong> (Smart grouper)</div>
+  <div class="step">Choose "Auto-group all repos"</div>
+  <div class="step">GitPulse sorts every repo into one of 10 categories:
+    <table>
+      <tr><td>Web App</td><td>JS/TS/HTML, package.json, react/vue</td></tr>
+      <tr><td>Mobile</td><td>Swift/Kotlin/Dart, Podfile, build.gradle</td></tr>
+      <tr><td>IoT / HW</td><td>C/C++, platformio.ini, .ino files</td></tr>
+      <tr><td>API / Backend</td><td>Go/Rust/Java, Dockerfile</td></tr>
+      <tr><td>Library</td><td>setup.py, Cargo.toml, library topics</td></tr>
+      <tr><td>Data / ML</td><td>Jupyter/R, .ipynb, ML topics</td></tr>
+      <tr><td>DevOps</td><td>Shell/HCL, Jenkinsfile, terraform</td></tr>
+      <tr><td>Docs</td><td>mkdocs.yml, docs/, documentation</td></tr>
+      <tr><td>Learning</td><td>tutorial/course/learning topics</td></tr>
+      <tr><td>Tool / CLI</td><td>cli.py, main.go, tool topics</td></tr>
+    </table>
+  </div>
+</div>
+<p>Web: <code>/grouper</code> → click "Auto-Group".</p>
+
+<h2 id="rhythm">See Your Coding Patterns</h2>
+<div class="steps">
+  <div class="step">Select option <strong>26</strong> (Commit rhythm analyzer)</div>
+  <div class="step">GitPulse fetches commits from your top 10 repos</div>
+  <div class="step">Analysis shows:
+    <ul>
+      <li>Peak coding hour</li>
+      <li>Morning / Afternoon / Evening / Night percentages</li>
+      <li>Weekday distribution</li>
+      <li>Weekend coding percentage</li>
+      <li>Burst days (5+ commits in one day)</li>
+      <li>Bimodal pattern detection (code both morning AND evening)</li>
+    </ul>
+  </div>
+  <div class="step">Your style: 🦉 Night Owl, 🐦 Early Bird, 🌙 Evening Warrior, 🔄 Dual Mode, or ⚡ Steady Coder</div>
+</div>
+<p>Web: <code>/rhythm</code> → click "Analyze".</p>
+
+<h2 id="analytics">View Traffic Analytics</h2>
+<div class="steps">
+  <div class="step">Select option <strong>20</strong> (Analytics)</div>
+  <div class="step">Enter repo name (you must own the repo)</div>
+  <div class="step">See 14-day data: views, unique visitors, clones, top referrers</div>
+</div>
+<p>Web: <code>/analytics</code> → enter repo name → click Load → bar chart visualization.</p>
+<p><em>Note: GitHub only provides traffic data for repos where you have push access.</em></p>
+
+<h2 id="accounts">Switch Between Accounts</h2>
+<div class="steps">
+  <div class="step">Select option <strong>27</strong> (Multi-account manager)</div>
+  <div class="step"><strong>Add account</strong>: enter a label (e.g., "work") and paste a token</div>
+  <div class="step"><strong>Switch</strong>: select a label from the list → active token changes instantly</div>
+  <div class="step"><strong>Remove</strong>: delete an account by label</div>
+</div>
+<p>Tokens stored in <code>~/.gitpulse/accounts.json</code> (chmod 600). No limit on accounts.</p>
+
+<h2 id="templates">Create From Template</h2>
+<div class="steps">
+  <div class="step">Select option <strong>17</strong> (Repo templates)</div>
+  <div class="step">Choose template: Python package, Node.js app, ESP32 firmware, Static website</div>
+  <div class="step">Enter repo name</div>
+  <div class="step">GitPulse creates the repo with README, .gitignore, LICENSE, and starter files</div>
+</div>
+
+<h2 id="ssh">Set Up SSH Keys</h2>
+<div class="steps">
+  <div class="step">Select option <strong>18</strong> (SSH key manager)</div>
+  <div class="step"><strong>Generate</strong>: creates an ed25519 key pair</div>
+  <div class="step"><strong>Upload</strong>: sends public key to your GitHub account</div>
+  <div class="step"><strong>Test</strong>: runs <code>ssh -T git@github.com</code> to verify</div>
+</div>
+
+<h2 id="timestamps">Edit Commit Timestamps</h2>
+<div class="steps">
+  <div class="step">Select option <strong>19</strong> (Timestamp editor)</div>
+  <div class="step"><strong>View</strong>: see author_date and commit_date for recent commits</div>
+  <div class="step"><strong>Shift</strong>: move all commits by N hours/days (timezone fixes)</div>
+  <div class="step"><strong>Randomize</strong>: scatter commits across business hours (privacy)</div>
+</div>
+<p><em>This rewrites git history — force push required.</em></p>
+
+<h2 id="ai">Generate AI Summaries</h2>
+<div class="steps">
+  <div class="step">Select option <strong>22</strong> (AI summaries)</div>
+  <div class="step"><strong>AI Summary</strong>: generates plain-English repo overview. Requires <code>openai</code> pip package + API key (optional).</div>
+  <div class="step"><strong>Magic Diff Storyteller</strong>: turns recent commits into a narrative. Uses pattern matching — <strong>no AI API needed</strong>.</div>
+</div>
+
+<h2 id="theme">Change Theme</h2>
+<h3>Web UI</h3>
+<div class="steps">
+  <div class="step">Go to <code>/settings</code></div>
+  <div class="step">Select from 7 themes (see <a href="themes.html">Themes page</a>)</div>
+  <div class="step">Click Save — updates immediately</div>
+</div>
+<h3>CLI</h3>
+<div class="steps">
+  <div class="step">Select option <strong>29</strong> (Settings)</div>
+  <div class="step">Choose "Theme" → select from list</div>
+</div>
+<p>Or edit <code>~/.gitpulse/config.json</code> → <code>"web_theme": "andalus"</code></p>
+
+<h2 id="language">Change Language</h2>
+<div class="steps">
+  <div class="step">CLI: option <strong>29</strong> → Settings → Language</div>
+  <div class="step">Web: <code>/settings</code> → select language</div>
+  <div class="step">Arabic activates RTL layout automatically</div>
+</div>
+
+<h2 id="voice">Use Voice Commands</h2>
+<p><em>Web only. Requires Chrome or Edge.</em></p>
+<div class="steps">
+  <div class="step">Go to <code>/voice</code></div>
+  <div class="step">Click the microphone button</div>
+  <div class="step">Speak a command:
+    <table>
+      <tr><td>"list repos"</td><td>→ /repos</td></tr>
+      <tr><td>"health check"</td><td>→ /health</td></tr>
+      <tr><td>"danger scan"</td><td>→ /danger</td></tr>
+      <tr><td>"rhythm"</td><td>→ /rhythm</td></tr>
+      <tr><td>"dashboard"</td><td>→ /</td></tr>
+      <tr><td>"settings"</td><td>→ /settings</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2 id="ambient">Ambient Dashboard</h2>
+<div class="steps">
+  <div class="step">Go to <code>/ambient</code> (or click "Ambient" in nav)</div>
+  <div class="step">Opens fullscreen: clock, date, repo stats, live event feed</div>
+  <div class="step">Auto-dims between 11pm–6am</div>
+  <div class="step">Perfect on a second monitor or wall display</div>
+</div>
+
+<h2 id="timemachine">Use the Time Machine</h2>
+<div class="steps">
+  <div class="step">Go to <code>/timemachine/{repo-name}</code></div>
+  <div class="step">Drag the slider to scrub through commit history</div>
+  <div class="step">See: commit message, author, date, and full file tree at each point</div>
+</div>
+
+<h2 id="dna">Generate DNA Fingerprint</h2>
+<div class="steps">
+  <div class="step">Go to <code>/dna</code></div>
+  <div class="step">Enter a repo name, click Generate</div>
+  <div class="step">See a unique SVG pattern based on: language mix, commits, stars, creation date</div>
+  <div class="step">Deterministic — same input always produces the same art</div>
+</div>
+
+<h2 id="graph">View Repo Graph</h2>
+<div class="steps">
+  <div class="step">Go to <code>/graph</code></div>
+  <div class="step">All repos appear as nodes (sized by stars, colored by language)</div>
+  <div class="step">Repos sharing a language are connected by lines</div>
+  <div class="step">Drag nodes, zoom, explore the force-directed layout</div>
+</div>
+
+<h2 id="portable">Run From USB</h2>
+<div class="steps">
+  <div class="step">Copy <code>gitpulse/</code> folder to USB stick</div>
+  <div class="step">(Optional) Put WinPython in <code>portable/python/</code></div>
+  <div class="step">Windows: double-click <code>portable\run.bat</code></div>
+  <div class="step">Linux: <code>./portable/run.sh</code></div>
+  <div class="step">Add <code>--web</code> for web mode: <code>portable\run.bat --web</code></div>
+</div>
+
+<h2 id="lan">Expose on LAN</h2>
+<div class="steps">
+  <div class="step">Edit <code>~/.gitpulse/config.json</code>: set <code>"web_host": "0.0.0.0"</code></div>
+  <div class="step">Run <code>python gitpulse.py --web</code></div>
+  <div class="step">Access from other devices at <code>http://YOUR_IP:5000</code></div>
+</div>
+<p><em>⚠️ No authentication on the web UI. LAN only — do not expose to internet without a reverse proxy.</em></p>
+
+<div class="doc-footer">
+  <a href="index.html">← Back to Docs</a> · <a href="faq.html">FAQ →</a>
+</div>
+</div>
+</body>
+</html>

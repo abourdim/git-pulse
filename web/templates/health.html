@@ -1,0 +1,27 @@
+{{include header.html}}
+<h1>Repo Health Dashboard</h1>
+<p style="color:var(--text-dim);margin-bottom:24px">Scanning your repos for best practices...</p>
+<div id="health-results"><p style="color:var(--text-dim)">Loading...</p></div>
+<script>
+(async () => {
+  const res = await fetch('/api/health');
+  const data = await res.json();
+  const el = document.getElementById('health-results');
+  if (!data.repos || !data.repos.length) { el.innerHTML = '<p>No repos found.</p>'; return; }
+  let html = '<table class="table"><thead><tr><th>Repo</th><th>README</th><th>LICENSE</th><th>.gitignore</th><th>Description</th><th>Topics</th><th>Score</th></tr></thead><tbody>';
+  data.repos.sort((a,b) => a.score - b.score);
+  for (const r of data.repos) {
+    const c = r.checks;
+    const sc = r.score >= 75 ? 'var(--success)' : r.score >= 50 ? 'var(--warn)' : 'var(--danger)';
+    const check = v => v ? '<span style="color:var(--success)">✓</span>' : '<span style="color:var(--danger)">✗</span>';
+    html += `<tr><td><a href="/repo/${r.name}">${r.name}</a></td>`;
+    html += `<td>${check(c['README.md'])}</td><td>${check(c['LICENSE'])}</td><td>${check(c['.gitignore'])}</td>`;
+    html += `<td>${check(c.description)}</td><td>${check(c.topics)}</td>`;
+    html += `<td><span style="color:${sc};font-weight:700">${r.score.toFixed(0)}%</span>`;
+    html += `<div class="health-bar" style="width:100px;margin-top:4px"><div class="health-bar-fill" style="width:${r.score}%;background:${sc}"></div></div></td></tr>`;
+  }
+  html += '</tbody></table>';
+  el.innerHTML = html;
+})();
+</script>
+{{include footer.html}}

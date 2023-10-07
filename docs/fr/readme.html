@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — README</title><link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Accueil</a><a href="readme.html" class="active">README</a><a href="install.html">Installation</a>
+    <a href="howto.html">Guides</a><a href="faq.html">FAQ</a><a href="commands.html">Commandes</a>
+    <a href="webui.html">Interface Web</a><a href="themes.html">Thèmes</a><a href="config.html">Configuration</a>
+  </nav>
+</div>
+<div class="doc-wrap">
+<h1>GitPulse v6.0 — Noor</h1>
+<p><strong>Le gestionnaire complet de dépôts GitHub — CLI + Interface Web</strong><br>
+Propulsé par <a href="http://workshop-diy.org">workshop-diy.org</a></p>
+
+<h2>Démarrage rapide</h2>
+<pre><code>bash gitpulse.sh                    # Installer
+python gitpulse.py                  # Mode CLI
+python gitpulse.py --web            # Interface Web
+python gitpulse.py --demo           # Démo (sans token)
+python gitpulse.py --web --demo     # Démo Web</code></pre>
+<p>Seule dépendance : <code>requests</code> — Python 3.8+</p>
+
+<h2>Fonctionnalités (29 CLI + 23 Pages Web)</h2>
+<table>
+<tr><th>Catégorie</th><th>#</th><th>Fonctionnalités</th></tr>
+<tr><td>Dépôts</td><td>1-7</td><td>Lister, Chercher, Détails, Créer, Supprimer, Modifier, Cloner</td></tr>
+<tr><td>Info Git</td><td>8-9</td><td>Commits, Branches</td></tr>
+<tr><td>Outils avancés</td><td>10-12</td><td>Sauvegarde, Tableau de santé, Opérations groupées</td></tr>
+<tr><td>Git en profondeur</td><td>13-14</td><td>Log Git interactif, Recherche inter-dépôts</td></tr>
+<tr><td>DevOps</td><td>15-16</td><td>Moniteur d'Actions, Gestionnaire de versions</td></tr>
+<tr><td>Boîte à outils</td><td>17-19</td><td>Modèles de dépôts, Clés SSH, Éditeur d'horodatage</td></tr>
+<tr><td>Analyses</td><td>20-21</td><td>Analytique et trafic, Scanner de dépendances</td></tr>
+<tr><td>IA</td><td>22</td><td>Résumés IA + Narrateur magique de diffs</td></tr>
+<tr><td>Sentinelle</td><td>23-25</td><td>Zone de danger, Archéologie Git, Groupeur intelligent</td></tr>
+<tr><td>Rythme</td><td>26-27</td><td>Analyseur de rythme de commits, Multi-compte</td></tr>
+<tr><td>—</td><td>28-29</td><td>Statistiques rapides, Paramètres</td></tr>
+</table>
+
+<h3>Fonctionnalités Web uniquement</h3>
+<table>
+<tr><th>Fonctionnalité</th><th>URL</th></tr>
+<tr><td><strong>Espace de fichiers</strong></td><td>/repo/{nom}/files — IDE : parcourir, éditer, téléverser, coloration syntaxique, outils génie</td></tr>
+<tr><td>Machine à remonter le temps</td><td>/timemachine/{nom}</td></tr>
+<tr><td>Empreinte ADN</td><td>/dna</td></tr>
+<tr><td>Graphe de dépôts</td><td>/graph</td></tr>
+<tr><td>Radar en direct</td><td>/radar</td></tr>
+<tr><td>Contrôle vocal</td><td>/voice</td></tr>
+<tr><td>Tableau de bord ambiant</td><td>/ambient</td></tr>
+</table>
+
+<h2>7 thèmes d'art islamique</h2>
+<p>Masjid (défaut, sombre) — Andalus (sombre) — Al-Hamra (sombre) — Nur (clair) — Raqsh (clair) — Sahra (sombre) — Zahra (sombre)</p>
+<p>Pastilles cliquables dans Paramètres — persistance via localStorage, aucun rechargement nécessaire.</p>
+
+<h2>3 langues (i18n)</h2>
+<p>English — Français — العربية (RTL complet)<br>
+89 clés de traduction · chargeur JSON côté client · changement en direct dans Paramètres<br>
+Débutant (8 éléments) — Avancé (29 éléments)</p>
+
+<h2>Coloration syntaxique</h2>
+<p>15+ langages : Python, JS/TS, C/C++, Go, Rust, Ruby, Java, Shell, SQL, HTML, CSS, YAML, TOML, Dockerfile.<br>
+Basée sur un tokenizer — les chaînes et commentaires ne contaminent jamais les mots-clés.</p>
+
+<h2>Mode démo</h2>
+<p>17 dépôts exemples. Toutes les fonctionnalités marchent avec des données simulées. Aucun token nécessaire.</p>
+
+<h2>Structure du projet</h2>
+<pre><code>gitpulse/                         78 fichiers
+  gitpulse.py                     Point d'entrée (CLI + --web + --demo)
+  gitpulse.sh                     Installeur (alias auto, une seule étape)
+  README.md                       Documentation
+  ROADMAP.md                      Historique de développement
+  docs/                           Documentation HTML (10 pages × 3 langues)
+  lib/                            25 modules Python
+  web/                            Serveur + 23 modèles + CSS + JS
+    static/i18n/                  Fichiers de traduction (en/fr/ar)
+    static/js/i18n.js             Chargeur de traductions
+  portable/                       Mode USB (run.bat + run.sh)</code></pre>
+
+<h2>Prérequis</h2>
+<p>Python 3.8+ — <code>requests</code> — Token GitHub — Optionnel : <code>openai</code></p>
+
+<h2>Licence</h2>
+<p>MIT</p>
+
+<div class="doc-footer">
+  <a href="index.html">← Retour aux Docs</a>
+</div>
+</div>
+</body>
+</html>

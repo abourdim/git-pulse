@@ -1,0 +1,60 @@
+{{include header.html}}
+<h2>🎤 Voice Control</h2>
+<div class="card">
+  <p>Click the microphone and speak a command.</p>
+  <button id="mic-btn" onclick="startVoice()" style="font-size:48px;background:none;border:none;cursor:pointer">🎤</button>
+  <p id="voice-status">Ready. Click to speak.</p>
+  <p id="voice-result" style="font-family:monospace;margin-top:10px"></p>
+</div>
+<div class="card" id="voice-output"></div>
+<script>
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (!SpeechRecognition) {
+  document.getElementById('voice-status').textContent = 'Speech recognition not supported. Use Chrome or Edge.';
+}
+function startVoice() {
+  if (!SpeechRecognition) return;
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  document.getElementById('voice-status').textContent = '🔴 Listening...';
+  document.getElementById('mic-btn').style.opacity = '0.5';
+  recognition.onresult = (e) => {
+    const text = e.results[0][0].transcript.toLowerCase();
+    document.getElementById('voice-result').textContent = `"${text}"`;
+    document.getElementById('voice-status').textContent = 'Processing...';
+    processCommand(text);
+  };
+  recognition.onerror = (e) => {
+    document.getElementById('voice-status').textContent = 'Error: ' + e.error;
+    document.getElementById('mic-btn').style.opacity = '1';
+  };
+  recognition.onend = () => { document.getElementById('mic-btn').style.opacity = '1'; };
+  recognition.start();
+}
+async function processCommand(text) {
+  const out = document.getElementById('voice-output');
+  if (text.includes('list') && text.includes('repo')) {
+    const r = await fetch('/api/repos');
+    const d = await r.json();
+    let h = '<h3>Your Repos</h3>';
+    d.repos.forEach(repo => { h += `<p>• <a href="/repo/${repo.name}">${repo.name}</a> (${repo.language||'—'})</p>`; });
+    out.innerHTML = h;
+  } else if (text.includes('health') || text.includes('check')) {
+    window.location.href = '/health';
+  } else if (text.includes('danger') || text.includes('security')) {
+    window.location.href = '/danger';
+  } else if (text.includes('rhythm') || text.includes('pattern')) {
+    window.location.href = '/rhythm';
+  } else if (text.includes('dashboard') || text.includes('home')) {
+    window.location.href = '/';
+  } else if (text.includes('setting')) {
+    window.location.href = '/settings';
+  } else {
+    out.innerHTML = `<p>Command not recognized: "${text}"</p><p>Try: "list repos", "health check", "dashboard", "settings", "danger scan", "rhythm"</p>`;
+  }
+  document.getElementById('voice-status').textContent = 'Done. Click to speak again.';
+}
+</script>
+{{include footer.html}}

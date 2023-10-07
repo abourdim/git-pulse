@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse v6.0 — التوثيق</title>
+<link rel="stylesheet" href="../style.css">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>body{font-family:'Tajawal','Amiri',sans-serif;direction:rtl} code,pre{direction:ltr;text-align:left}</style>
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse توثيق</span>
+  <nav>
+    <a href="index.html" class="active">الرئيسية</a>
+    <a href="readme.html">README</a>
+    <a href="install.html">التثبيت</a>
+    <a href="howto.html">الأدلة</a>
+    <a href="faq.html">أسئلة شائعة</a>
+    <a href="commands.html">الأوامر</a>
+    <a href="webui.html">واجهة الويب</a>
+    <a href="themes.html">المظاهر</a>
+    <a href="config.html">الإعدادات</a>
+  </nav>
+  <span class="bismillah">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ <span style="font-size:.65rem;opacity:.5;margin-right:12px"><a href="../index.html" style="color:var(--text-dim)">EN</a> · <a href="../fr/index.html" style="color:var(--text-dim)">FR</a></span></span>
+</div>
+
+<div class="doc-wrap">
+<div class="hero">
+  <h1>GitPulse v6.0 — Noor ✦</h1>
+  <p>مدير مستودعات GitHub الكامل — سطر الأوامر + واجهة الويب<br>
+  بواسطة <a href="http://workshop-diy.org">workshop-diy.org</a></p>
+</div>
+
+<h2>البدء السريع</h2>
+<pre><code>bash gitpulse.sh                    # التثبيت
+python gitpulse.py                  # وضع سطر الأوامر
+python gitpulse.py --web            # واجهة الويب
+python gitpulse.py --demo           # العرض التجريبي (بدون token)
+python gitpulse.py --web --demo     # عرض تجريبي للويب</code></pre>
+<p>المتطلب الوحيد: <code>requests</code> · Python 3.8+ · <a href="install.html">دليل التثبيت الكامل ←</a></p>
+
+<h2>التوثيق</h2>
+<div class="card-grid">
+  <a href="readme.html" style="text-decoration:none"><div class="card">
+    <h3>📄 README</h3>
+    <p>نظرة عامة على المشروع، الميزات، الهيكل، الرخصة.</p>
+  </div></a>
+  <a href="install.html" style="text-decoration:none"><div class="card">
+    <h3>⚡ التثبيت</h3>
+    <p>التثبيت بالسكريبت، يدوياً أو USB محمول. الحصول على token GitHub.</p>
+  </div></a>
+  <a href="howto.html" style="text-decoration:none"><div class="card">
+    <h3>📖 الأدلة العملية</h3>
+    <p>خطوة بخطوة لكل ميزة: النسخ الاحتياطي، الأمان، التحليلات، الصوت...</p>
+  </div></a>
+  <a href="faq.html" style="text-decoration:none"><div class="card">
+    <h3>❓ أسئلة شائعة</h3>
+    <p>إجابات على الأسئلة المتكررة حول الأمان، التوكنات، الأوضاع، الحدود.</p>
+  </div></a>
+  <a href="commands.html" style="text-decoration:none"><div class="card">
+    <h3>⌨️ أوامر CLI</h3>
+    <p>جميع الأوامر الـ 29 مع الوصف والاستخدام والأمثلة.</p>
+  </div></a>
+  <a href="webui.html" style="text-decoration:none"><div class="card">
+    <h3>🌐 واجهة الويب</h3>
+    <p>جميع الـ 23 صفحة، عناوين URL، نقاط API، وضع العرض التجريبي.</p>
+  </div></a>
+  <a href="themes.html" style="text-decoration:none"><div class="card">
+    <h3>🎨 المظاهر واللغات</h3>
+    <p>7 مظاهر من الفن الإسلامي، 3 لغات، وضعان.</p>
+  </div></a>
+  <a href="config.html" style="text-decoration:none"><div class="card">
+    <h3>⚙️ الإعدادات</h3>
+    <p>جميع مفاتيح الإعدادات، تعدد الحسابات، الوضع المحمول، استكشاف الأخطاء.</p>
+  </div></a>
+</div>
+
+<h2>نظرة سريعة</h2>
+<table>
+  <tr><td>أوامر CLI</td><td>29 (متقدم) / 8 (مبتدئ)</td></tr>
+  <tr><td>صفحات الويب</td><td>23 قالب</td></tr>
+  <tr><td>نقاط API</td><td>27 (GET + POST)</td></tr>
+  <tr><td>وحدات Python</td><td>25</td></tr>
+  <tr><td>المظاهر</td><td>7 أنماط من الفن الإسلامي</td></tr>
+  <tr><td>اللغات</td><td>English · Français · العربية (RTL) — 89 مفتاح ترجمة</td></tr>
+  <tr><td>تلوين الكود</td><td>15+ لغة برمجة (مبني على محلل رموز)</td></tr>
+  <tr><td>المتطلبات</td><td><code>requests</code> فقط</td></tr>
+  <tr><td>مستودعات العرض</td><td>17 مشروع تجريبي</td></tr>
+  <tr><td>إجمالي الملفات</td><td>78</td></tr>
+</table>
+
+<div class="doc-footer">
+  بِسْمِ ٱللَّٰهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ · GitPulse v6.0 Noor · <a href="http://workshop-diy.org">workshop-diy.org</a>
+</div>
+</div>
+</body>
+</html>

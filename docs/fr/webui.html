@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — Interface Web</title><link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Accueil</a><a href="readme.html">README</a><a href="install.html">Installation</a>
+    <a href="howto.html">Guides</a><a href="faq.html">FAQ</a><a href="commands.html">Commandes</a>
+    <a href="webui.html" class="active">Interface Web</a><a href="themes.html">Thèmes</a><a href="config.html">Configuration</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Interface Web</h1>
+<h2>Lancement</h2>
+<pre><code>python gitpulse.py --web             # Normal
+python gitpulse.py --web --demo      # Démo (sans token)</code></pre>
+<p>Serveur : <code>http://127.0.0.1:5000</code>. Le navigateur s'ouvre automatiquement. Sans token ? La page d'accueil apparaît avec les boutons Connecter / Démo / Tutoriel.</p>
+
+<h2>Architecture</h2>
+<ul>
+  <li><strong>Serveur</strong> : <code>web/server.py</code> — Python http.server, zéro dépendance</li>
+  <li><strong>Routeur</strong> : <code>web/router.py</code> — Dispatch d'URLs avec &lt;param&gt;</li>
+  <li><strong>Modèles</strong> : <code>web/templating.py</code> — {{var}}, {{for}}, {{if}}, {{include}}</li>
+  <li><strong>Routes</strong> : <code>web/routes/__init__.py</code> — gestionnaires de pages + API</li>
+</ul>
+
+<h2>Les 23 pages</h2>
+<table>
+<tr><th>Page</th><th>URL</th><th>Description</th></tr>
+<tr><td>Accueil</td><td><code>/welcome</code></td><td>Connecter le token, lancer la démo, lire le tutoriel</td></tr>
+<tr><td>Tableau de bord</td><td><code>/</code></td><td>Aperçu des statistiques, boutons d'accès rapide</td></tr>
+<tr><td>Dépôts</td><td><code>/repos</code></td><td>Parcourir les dépôts — colonnes triables, recherche, création</td></tr>
+<tr><td>Détail du dépôt</td><td><code>/repo/{nom}</code></td><td>Langages, commits, branches</td></tr>
+<tr><td><strong>Espace de fichiers</strong></td><td><code>/repo/{nom}/files</code></td><td>IDE : parcourir, voir, éditer, téléverser, supprimer — coloration syntaxique, outils génie</td></tr>
+<tr><td>Santé</td><td><code>/health</code></td><td>Score de santé des dépôts</td></tr>
+<tr><td>Sauvegarde</td><td><code>/backup</code></td><td>Gestionnaire de sauvegardes</td></tr>
+<tr><td>Zone de danger</td><td><code>/danger</code></td><td>Scanner de secrets + indicateurs de risque</td></tr>
+<tr><td>Archéologie</td><td><code>/archaeology</code></td><td>Branches mortes, gros fichiers, TODOs</td></tr>
+<tr><td>Groupeur</td><td><code>/grouper</code></td><td>Catégorisation automatique des dépôts (10 types)</td></tr>
+<tr><td>Rythme</td><td><code>/rhythm</code></td><td>Analyse des schémas de commits</td></tr>
+<tr><td>Analytique</td><td><code>/analytics</code></td><td>Vues/clones/référents du trafic</td></tr>
+<tr><td>Machine à remonter le temps</td><td><code>/timemachine/{nom}</code></td><td>Curseur de commits + arbre de fichiers</td></tr>
+<tr><td>ADN</td><td><code>/dna</code></td><td>Empreinte SVG par dépôt</td></tr>
+<tr><td>Graphe</td><td><code>/graph</code></td><td>Carte de dépôts en force</td></tr>
+<tr><td>Radar</td><td><code>/radar</code></td><td>Flux d'événements en direct (rafraîchissement 30s)</td></tr>
+<tr><td>Voix</td><td><code>/voice</code></td><td>Commandes vocales (Chrome/Edge)</td></tr>
+<tr><td>Ambiant</td><td><code>/ambient</code></td><td>Tableau de bord plein écran permanent</td></tr>
+<tr><td>Tutoriel</td><td><code>/tutorial</code></td><td>Guide complet des fonctionnalités</td></tr>
+<tr><td>Paramètres</td><td><code>/settings</code></td><td>Thème, langue, mode — persistance via localStorage</td></tr>
+<tr><td>404</td><td><em>invalide</em></td><td>Page non trouvée</td></tr>
+</table>
+
+<h2>Espace de fichiers (v2.0+)</h2>
+<p>Navigateur de fichiers complet de type IDE à <code>/repo/{nom}/files</code> :</p>
+<ul>
+  <li><strong>Panneau arbre</strong> — arbre de dossiers extensible avec tailles, recherche par filtre</li>
+  <li><strong>Visionneuse de code</strong> — coloration syntaxique pour 15+ langages</li>
+  <li><strong>Éditeur</strong> — modifier n'importe quel fichier dans le navigateur, commit direct sur GitHub</li>
+  <li><strong>Aperçu</strong> — Markdown rendu en direct, vue partagée (code + rendu)</li>
+  <li><strong>Outils génie</strong> — générateur README, injecteur de modèles, suivi TODO, scanner de secrets, recherche de code, galerie d'images</li>
+  <li><strong>Téléverser / Nouveau / Supprimer</strong> — gestion complète des fichiers</li>
+</ul>
+
+<h2>Points d'API (JSON)</h2>
+<table>
+<tr><th>Méthode</th><th>URL</th><th>Retourne</th></tr>
+<tr><td>GET</td><td><code>/api/repos</code></td><td>Tous les dépôts</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{nom}</code></td><td>Dépôt + langages</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{nom}/commits</code></td><td>Commits récents</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{nom}/tree</code></td><td>Arbre de fichiers</td></tr>
+<tr><td>GET</td><td><code>/api/health</code></td><td>Scores de santé</td></tr>
+<tr><td>GET</td><td><code>/api/danger/{nom}</code></td><td>Secrets + risques</td></tr>
+<tr><td>POST</td><td><code>/api/connect</code></td><td>Accepter token ou démo</td></tr>
+<tr><td>POST</td><td><code>/api/settings</code></td><td>Mettre à jour la config</td></tr>
+<tr><td>POST</td><td><code>/api/repo/create</code></td><td>Créer un dépôt</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{nom}/fileget?path=…</code></td><td>Contenu du fichier (base64) + SHA</td></tr>
+<tr><td>POST</td><td><code>/api/repo/{nom}/file/save</code></td><td>Créer/modifier un fichier (commit)</td></tr>
+<tr><td>POST</td><td><code>/api/repo/{nom}/file/delete</code></td><td>Supprimer un fichier (commit)</td></tr>
+<tr><td>GET</td><td><code>/static/i18n/{lang}.json</code></td><td>Chaînes de traduction (en/fr/ar)</td></tr>
+</table>
+
+<h2>Internationalisation (i18n)</h2>
+<p>Système de traduction côté client introduit en v6.0 :</p>
+<ul>
+  <li><strong>3 langues</strong> : English, Français, العربية (avec support RTL complet)</li>
+  <li><strong>89 clés de traduction</strong> dans 8 modèles (74 éléments balisés)</li>
+  <li><strong>Fichiers JSON</strong> : <code>/static/i18n/en.json</code>, <code>fr.json</code>, <code>ar.json</code></li>
+  <li><strong>Changement en direct</strong> : Paramètres → Langue applique instantanément (pas de rechargement)</li>
+</ul>
+
+<div class="doc-footer">
+  <a href="index.html">← Retour aux Docs</a> · <a href="themes.html">Thèmes →</a>
+</div>
+</div>
+</body>
+</html>

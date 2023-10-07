@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — FAQ</title><link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Accueil</a><a href="readme.html">README</a><a href="install.html">Installation</a>
+    <a href="howto.html">Guides</a><a href="faq.html" class="active">FAQ</a><a href="commands.html">Commandes</a>
+    <a href="webui.html">Interface Web</a><a href="themes.html">Thèmes</a><a href="config.html">Configuration</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Questions fréquentes</h1>
+
+<h2>Général</h2>
+
+<div class="faq-q">Q : Qu'est-ce que GitPulse ?</div>
+<div class="faq-a">Un gestionnaire de dépôts GitHub avec un CLI (29 commandes) et une interface Web (23 pages). Il permet de gérer, analyser, sécuriser et visualiser tous vos dépôts GitHub depuis un seul endroit.</div>
+
+<div class="faq-q">Q : Quelle version de Python est nécessaire ?</div>
+<div class="faq-a">Python 3.8 ou supérieur. Testé sur 3.8, 3.9, 3.10, 3.11 et 3.12.</div>
+
+<div class="faq-q">Q : Quelles sont les dépendances ?</div>
+<div class="faq-a">Uniquement <code>requests</code>. L'installeur l'installe automatiquement. Optionnel : <code>openai</code> pour les résumés IA.</div>
+
+<div class="faq-q">Q : Est-ce que ça marche sur Windows ?</div>
+<div class="faq-a">Oui. Via Git Bash, MSYS2, WSL, ou le mode portable USB (<code>portable/run.bat</code>).</div>
+
+<h2>Sécurité & Tokens</h2>
+
+<div class="faq-q">Q : Mon token est-il en sécurité ?</div>
+<div class="faq-a">Oui. Le token est stocké localement dans <code>~/.gitpulse/config.json</code>. Il n'est jamais envoyé ailleurs qu'à l'API GitHub. Le scanner de secrets ne signale jamais votre propre token.</div>
+
+<div class="faq-q">Q : Quelles portées de token sont nécessaires ?</div>
+<div class="faq-a"><code>repo</code> (accès complet aux dépôts), <code>read:org</code> (lire les organisations), <code>read:user</code> (lire le profil). Pour les actions GitHub : ajouter <code>workflow</code>.</div>
+
+<div class="faq-q">Q : Que fait le scanner de secrets ?</div>
+<div class="faq-a">Il recherche dans les fichiers de vos dépôts les clés API, mots de passe, tokens et secrets exposés en utilisant des expressions régulières. Il ne télécharge ni ne stocke aucun contenu de fichier.</div>
+
+<h2>Mode démo</h2>
+
+<div class="faq-q">Q : Comment fonctionne le mode démo ?</div>
+<div class="faq-a">Il utilise 17 dépôts exemples générés avec des données simulées réalistes. Aucun appel API, aucun token nécessaire. Parfait pour explorer les fonctionnalités avant de connecter votre vrai compte.</div>
+
+<div class="faq-q">Q : Puis-je modifier les données de démo ?</div>
+<div class="faq-a">Les données de démo sont générées au démarrage par <code>lib/demo.py</code>. Vous pouvez modifier ce fichier pour personnaliser les dépôts exemples.</div>
+
+<h2>Interface Web</h2>
+
+<div class="faq-q">Q : Comment lancer l'interface web ?</div>
+<div class="faq-a"><code>python gitpulse.py --web</code> ou <code>gp --web</code>. Ouvre automatiquement <code>http://127.0.0.1:5000</code>.</div>
+
+<div class="faq-q">Q : Puis-je changer le port ?</div>
+<div class="faq-a">Oui. Modifier <code>"web_port"</code> dans config.json ou lancer avec <code>--port 8080</code>.</div>
+
+<div class="faq-q">Q : Les thèmes sont-ils persistants ?</div>
+<div class="faq-a">Oui. Le thème, la langue et le mode sont sauvegardés dans localStorage du navigateur ET dans config.json côté serveur. Aucun flash au rechargement.</div>
+
+<div class="faq-q">Q : Comment fonctionne l'espace de fichiers ?</div>
+<div class="faq-a">Allez sur <code>/repo/{nom}/files</code>. Arbre de fichiers à gauche, visionneuse/éditeur à droite. Coloration syntaxique pour 15+ langages. Outils génie : génération README, scanner de secrets, recherche de code, suivi TODO, galerie d'images.</div>
+
+<h2>Limites</h2>
+
+<div class="faq-q">Q : Quelles sont les limites de l'API GitHub ?</div>
+<div class="faq-a">Avec un token : 5 000 requêtes/heure. GitPulse affiche l'utilisation restante. Le mode démo ne consomme aucune limite.</div>
+
+<div class="faq-q">Q : Combien de dépôts sont supportés ?</div>
+<div class="faq-a">Aucune limite côté GitPulse. L'API GitHub pagine à 100 par requête — GitPulse gère automatiquement la pagination.</div>
+
+<div class="doc-footer">
+  <a href="index.html">← Retour aux Docs</a> · <a href="commands.html">Commandes →</a>
+</div>
+</div>
+</body>
+</html>

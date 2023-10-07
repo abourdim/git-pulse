@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="{{language}}" dir="{{dir}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{page_title}} — GitPulse</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Righteous&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="/static/js/i18n.js"></script>
+<script>
+// Pre-apply language/dir from localStorage (runs before body)
+(function(){
+  var l = localStorage.getItem("gp_language");
+  if(l){
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+  }
+})();
+</script>
+</head>
+<body class="theme-{{theme}}">
+<script>
+// Override theme from localStorage immediately (no flash)
+(function(){
+  var t = localStorage.getItem("gp_theme");
+  if(t) document.body.className = document.body.className.replace(/theme-\S+/g,"").trim() + " theme-" + t;
+})();
+</script>
+<div class="app">
+  <div class="deco-band top-band" aria-hidden="true"></div>
+
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-header">
+        <img src="/static/logo.svg" alt="Workshop DIY" class="sb-logo">
+        <div class="sb-brand">
+          <span class="sb-title">GitPulse</span>
+          <span class="sb-version">v{{version}}</span>
+        </div>
+      </div>
+
+      <nav class="sb-nav">
+        <div class="sb-group" data-group="core">
+          <div class="sb-label" onclick="this.parentElement.classList.toggle('open')"><span class="sb-arrow">›</span> Core</div>
+          <div class="sb-items">
+            <a href="/" class="sb-link" data-page="dashboard"><span class="sb-icon">🏠</span><span class="sb-text" data-i18n="nav_dashboard">Dashboard</span></a>
+            <a href="/repos" class="sb-link" data-page="repos"><span class="sb-icon">📦</span><span class="sb-text" data-i18n="nav_repos">Repos</span></a>
+            <a href="/health" class="sb-link" data-page="health"><span class="sb-icon">🏥</span><span class="sb-text" data-i18n="nav_health">Health</span></a>
+            <a href="/danger" class="sb-link" data-page="security"><span class="sb-icon">🛡️</span><span class="sb-text" data-i18n="nav_security">Security</span></a>
+            <a href="/analytics" class="sb-link" data-page="analytics"><span class="sb-icon">📊</span><span class="sb-text" data-i18n="nav_analytics">Analytics</span></a>
+          </div>
+        </div>
+
+        <div class="sb-group" data-group="explore">
+          <div class="sb-label" onclick="this.parentElement.classList.toggle('open')"><span class="sb-arrow">›</span> Explore</div>
+          <div class="sb-items">
+            <a href="/archaeology" class="sb-link"><span class="sb-icon">🏺</span><span class="sb-text" data-i18n="nav_archaeology">Archaeology</span></a>
+            <a href="/grouper" class="sb-link"><span class="sb-icon">📂</span><span class="sb-text" data-i18n="nav_grouper">Grouper</span></a>
+            <a href="/rhythm" class="sb-link"><span class="sb-icon">💓</span><span class="sb-text" data-i18n="nav_rhythm">Rhythm</span></a>
+            <a href="/dna" class="sb-link"><span class="sb-icon">🧬</span><span class="sb-text" data-i18n="nav_dna">DNA</span></a>
+            <a href="/graph" class="sb-link"><span class="sb-icon">🕸️</span><span class="sb-text" data-i18n="nav_graph">Graph</span></a>
+          </div>
+        </div>
+
+        <div class="sb-group" data-group="live">
+          <div class="sb-label" onclick="this.parentElement.classList.toggle('open')"><span class="sb-arrow">›</span> Live</div>
+          <div class="sb-items">
+            <a href="/radar" class="sb-link"><span class="sb-icon">📡</span><span class="sb-text" data-i18n="nav_radar">Radar</span></a>
+            <a href="/voice" class="sb-link"><span class="sb-icon">🎤</span><span class="sb-text" data-i18n="nav_voice">Voice</span></a>
+            <a href="/ambient" class="sb-link" target="_blank"><span class="sb-icon">🌙</span><span class="sb-text" data-i18n="nav_ambient">Ambient</span></a>
+          </div>
+        </div>
+
+        <div class="sb-group" data-group="system">
+          <div class="sb-label" onclick="this.parentElement.classList.toggle('open')"><span class="sb-arrow">›</span> System</div>
+          <div class="sb-items">
+            <a href="/settings" class="sb-link"><span class="sb-icon">⚙️</span><span class="sb-text" data-i18n="nav_settings">Settings</span></a>
+            <a href="/tutorial" class="sb-link"><span class="sb-icon">📖</span><span class="sb-text" data-i18n="nav_tutorial">Tutorial</span></a>
+            <a href="/docs/" class="sb-link" target="_blank"><span class="sb-icon">📄</span><span class="sb-text" data-i18n="nav_docs">Docs</span></a>
+          </div>
+        </div>
+      </nav>
+
+      <div class="sb-footer">
+        <a href="http://workshop-diy.org" target="_blank" class="sb-powered">workshop-diy.org</a>
+      </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+      <header class="top-header">
+        <div class="bismillah" aria-hidden="true">
+          <span class="bism-ornament">✦</span>
+          بِسْمِ ٱللَّٰهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
+          <span class="bism-ornament">✦</span>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+        <div class="header-left">
+          <h1 class="app-title">GitPulse</h1>
+          <span class="header-version">v{{version}}</span>
+          <span class="header-subtitle">{{page_title}}</span>
+        </div>
+        <div class="header-right">
+          <span class="user-pill">{{username}}</span>
+        </div>
+      </header>
+
+      <main class="content">

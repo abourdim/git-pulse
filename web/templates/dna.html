@@ -1,0 +1,77 @@
+{{include header.html}}
+<h2>🧬 Repo DNA Fingerprint</h2>
+<div class="card">
+  <label>Select repo:
+    <select id="repo-input"><option value="">Loading repos...</option></select>
+  </label>
+  <button onclick="generateDNA()">🧬 Generate</button>
+</div>
+<div class="card" id="dna-container" style="text-align:center"></div>
+<script>
+fetch('/api/repos').then(r=>r.json()).then(d=>{
+  const s=document.getElementById('repo-input');
+  s.innerHTML='<option value="">— pick a repo —</option>';
+  (d.repos||d||[]).forEach(r=>{s.innerHTML+=`<option value="${r.name}">${r.name}</option>`});
+});
+async function generateDNA() {
+  const n = document.getElementById('repo-input').value;
+  if (!n) return;
+  document.getElementById('dna-container').innerHTML = '<p>Generating fingerprint...</p>';
+  const r = await fetch('/api/dna/' + n);
+  const d = await r.json();
+  if (d.error) { document.getElementById('dna-container').innerHTML = '<p>'+d.error+'</p>'; return; }
+
+  // Generate SVG from seed
+  const seed = d.seed;
+  const size = 300;
+  const colors = ['#2ecc71','#3498db','#9b59b6','#e74c3c','#f39c12','#1abc9c','#e67e22'];
+  let svg = `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">`;
+  svg += `<rect width="${size}" height="${size}" fill="#1a1a2e" rx="15"/>`;
+
+  // Deterministic pattern from seed
+  for (let i = 0; i < 12; i++) {
+    const val = parseInt(seed.substr(i * 2, 2), 16);
+    const val2 = parseInt(seed.substr(i * 2 + 1, 2), 16);
+    const cx = 50 + (val / 255) * 200;
+    const cy = 50 + (val2 / 255) * 200;
+    const radius = 10 + (d.commits_count || 1) * 0.5 + (val % 30);
+    const color = colors[val % colors.length];
+    const opacity = 0.3 + (val % 50) / 100;
+    svg += `<circle cx="${cx}" cy="${cy}" r="${radius}" fill="${color}" opacity="${opacity}"/>`;
+  }
+
+  // Language rings
+  let angle = 0;
+  const langEntries = Object.entries(d.languages || {});
+  langEntries.forEach(([lang, pct], i) => {
+    const a1 = angle * Math.PI / 180;
+    const sweep = pct * 360;
+    const a2 = (angle + sweep) * Math.PI / 180;
+    const r = 120;
+    const x1 = 150 + r * Math.cos(a1), y1 = 150 + r * Math.sin(a1);
+    const x2 = 150 + r * Math.cos(a2), y2 = 150 + r * Math.sin(a2);
+    const large = sweep > 180 ? 1 : 0;
+    const color = colors[i % colors.length];
+    svg += `<path d="M150,150 L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z" fill="${color}" opacity="0.6"/>`;
+    angle += sweep;
+  });
+
+  // Stars indicator
+  const starRadius = Math.min(d.stars * 3 + 5, 40);
+  svg += `<circle cx="150" cy="150" r="${starRadius}" fill="gold" opacity="0.4"/>`;
+  svg += `<text x="150" y="155" text-anchor="middle" fill="white" font-size="14">★${d.stars}</text>`;
+
+  // Name
+  svg += `<text x="150" y="285" text-anchor="middle" fill="white" font-size="12" opacity="0.7">${d.name}</text>`;
+  svg += '</svg>';
+
+  let h = svg;
+  h += '<div style="margin-top:15px;text-align:left">';
+  h += `<p><strong>Commits:</strong> ${d.commits_count} | <strong>Stars:</strong> ${d.stars} | <strong>Size:</strong> ${(d.size/1024).toFixed(1)} MB</p>`;
+  h += '<p><strong>Languages:</strong> ';
+  langEntries.forEach(([l, p]) => { h += `${l} (${(p*100).toFixed(0)}%) `; });
+  h += '</p></div>';
+  document.getElementById('dna-container').innerHTML = h;
+}
+</script>
+{{include footer.html}}

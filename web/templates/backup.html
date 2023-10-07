@@ -1,0 +1,27 @@
+{{include header.html}}
+<h1>Backup Manager</h1>
+<p style="color:var(--text-dim);margin-bottom:24px">Use the CLI for full backup capabilities: <code>python gitpulse.py</code> → Backup manager</p>
+<div class="cards">
+  <div class="card"><h3>CLI</h3><p>Clone/pull all repos</p></div>
+  <div class="card"><h3>Compress</h3><p>Create .tar.gz archives</p></div>
+  <div class="card"><h3>Schedule</h3><p>Automate with cron</p></div>
+</div>
+<div class="section">
+  <h2>Quick Backup via API</h2>
+  <p style="color:var(--text-dim)">Your repos ready to clone:</p>
+  <div id="backup-list"><p style="color:var(--text-dim)">Loading...</p></div>
+</div>
+<script>
+(async () => {
+  const res = await fetch('/api/repos');
+  const data = await res.json();
+  const el = document.getElementById('backup-list');
+  let html = '<table class="table"><thead><tr><th>Repo</th><th>Clone URL</th></tr></thead><tbody>';
+  for (const r of data.repos) {
+    html += `<tr><td>${r.name}</td><td><code>git clone https://github.com/${document.querySelector('.user')?.textContent || ''}/${r.name}.git</code></td></tr>`;
+  }
+  html += '</tbody></table>';
+  el.innerHTML = html;
+})();
+</script>
+{{include footer.html}}

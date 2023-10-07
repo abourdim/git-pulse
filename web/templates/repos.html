@@ -1,0 +1,528 @@
+{{include header.html}}
+
+<style>
+.sort-header{cursor:pointer;user-select:none;white-space:nowrap;transition:color .2s;position:relative}
+.sort-header:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.sort-header.active{color:var(--accent)}
+.sort-arrow{font-size:.7rem;margin-left:4px;opacity:.6;display:inline-block;transition:transform .2s}
+.sort-header.active .sort-arrow{opacity:1;color:var(--accent)}
+.sort-header:hover .sort-arrow{opacity:.8}
+.repo-row{transition:background .15s}
+.repo-row:hover{background:rgba(255,255,255,.02)}
+th.sort-header{padding-bottom:8px;border-bottom:2px solid var(--border);font-size:.7rem;letter-spacing:.08em}
+</style>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+  <h2 data-i18n="page_repos">Repositories ({{total}})</h2>
+  <div style="display:flex;gap:8px">
+    <input type="text" id="repo-search" placeholder="Search repos..." data-i18n="search_repos" data-i18n-attr="placeholder" style="width:250px">
+    <button class="btn" onclick="openCloneModal()" style="background:var(--accent);color:#fff">⬇ Clone All</button>
+    <button class="btn" onclick="openVisibilityModal(true)" style="background:#6366f1;color:#fff">🔒 All Private</button>
+    <button class="btn" onclick="openVisibilityModal(false)" style="background:#22c55e;color:#fff">🌐 All Public</button>
+    <button class="btn" onclick="openPagesModal(false)" style="background:#ef4444;color:#fff">📄 Disable All Pages</button>
+    <button class="btn" onclick="openPagesModal(true)" style="background:#3b82f6;color:#fff">📄 Enable All Pages</button>
+    <button class="btn btn-primary" data-modal="create-modal" data-i18n="btn_create_repo">+ New Repo</button>
+  </div>
+</div>
+
+<table class="table" id="repoTable">
+  <thead>
+    <tr>
+      <th class="sort-header active" data-col="name" data-type="string" onclick="sortTable('name','string')"><span data-i18n="col_name">NAME</span> <span class="sort-arrow">▲</span></th>
+      <th class="sort-header" data-col="visibility" data-type="string" onclick="sortTable('visibility','string')"><span data-i18n="col_visibility">VISIBILITY</span> <span class="sort-arrow">▲</span></th>
+      <th class="sort-header" data-col="pages" data-type="string" onclick="sortTable('pages','string')"><span>PAGES</span> <span class="sort-arrow">▲</span></th>
+      <th class="sort-header" data-col="size" data-type="number" onclick="sortTable('size','number')"><span data-i18n="col_size">SIZE</span> <span class="sort-arrow">▲</span></th>
+      <th class="sort-header" data-col="updated" data-type="date" onclick="sortTable('updated','date')"><span data-i18n="col_updated">UPDATED</span> <span class="sort-arrow">▼</span></th>
+    </tr>
+  </thead>
+  <tbody id="repoBody">
+    {{for repo in repos}}
+    <tr class="repo-row" data-name="{{repo.name}}" data-visibility="{{repo.visibility}}" data-pages="{{repo.has_pages}}" data-size="{{repo.size}}" data-updated="{{repo.updated_at}}">
+      <td>
+        <a href="/repo/{{repo.name}}" style="font-weight:600">{{repo.name}}</a>
+        <a href="/repo/{{repo.name}}/files" style="font-size:.7rem;margin-left:6px;opacity:.5" title="Browse files">📁</a>
+        <a href="{{repo.html_url}}" target="_blank" rel="noopener" title="Open on GitHub" style="font-size:.75rem;margin-left:6px;opacity:.5;text-decoration:none">
+          <svg height="14" width="14" viewBox="0 0 16 16" fill="currentColor" style="vertical-align:middle"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+        <a href="{{repo.pages_url}}" target="_blank" rel="noopener" title="Open GitHub Pages" style="font-size:.75rem;margin-left:4px;opacity:.5;text-decoration:none;display:{{repo.pages_display}}">🌍</a>
+        <div style="color:var(--text-dim);font-size:.8em">{{repo.description}}</div>
+      </td>
+      <td>{{repo.visibility}}</td>
+      <td>{{repo.pages_status}}</td>
+      <td style="color:var(--text-dim)">{{repo.size}} KB</td>
+      <td style="color:var(--text-dim);font-size:.85em">{{repo.updated_at}}</td>
+    </tr>
+    {{endfor}}
+  </tbody>
+</table>
+
+<!-- Create Modal -->
+<div id="create-modal" class="modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:100">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:480px;width:90%">
+    <h2 style="margin-bottom:16px" data-i18n="create_repo_title">Create Repository</h2>
+    <form onsubmit="event.preventDefault(); GP.createRepo(this)">
+      <div class="form-group"><label data-i18n="create_repo_name">Name</label><input type="text" name="name" required></div>
+      <div class="form-group"><label data-i18n="create_repo_desc">Description</label><input type="text" name="description"></div>
+      <div class="form-group"><label><input type="checkbox" name="private" checked> <span data-i18n="create_repo_private">Private</span></label></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" class="btn modal-close" data-i18n="btn_cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" data-i18n="btn_create">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+var currentSort = "name";
+var currentDir = "asc";
+
+function sortTable(col, type) {
+  var headers = document.querySelectorAll(".sort-header");
+  var clickedHeader = document.querySelector('[data-col="'+col+'"]');
+
+  // Toggle direction if same column, else default
+  if (currentSort === col) {
+    currentDir = currentDir === "asc" ? "desc" : "asc";
+  } else {
+    currentDir = (type === "date") ? "desc" : "asc"; // dates default newest first
+    currentSort = col;
+  }
+
+  // Update header styles
+  headers.forEach(function(h) {
+    h.classList.remove("active");
+    h.querySelector(".sort-arrow").textContent = "▲";
+  });
+  clickedHeader.classList.add("active");
+  clickedHeader.querySelector(".sort-arrow").textContent = currentDir === "asc" ? "▲" : "▼";
+
+  // Sort rows
+  var tbody = document.getElementById("repoBody");
+  var rows = Array.from(tbody.querySelectorAll(".repo-row"));
+
+  rows.sort(function(a, b) {
+    var va = a.getAttribute("data-" + col) || "";
+    var vb = b.getAttribute("data-" + col) || "";
+
+    if (type === "number") {
+      va = parseFloat(va) || 0;
+      vb = parseFloat(vb) || 0;
+    } else if (type === "date") {
+      va = new Date(va).getTime() || 0;
+      vb = new Date(vb).getTime() || 0;
+    } else {
+      va = va.toLowerCase();
+      vb = vb.toLowerCase();
+    }
+
+    var cmp = 0;
+    if (va < vb) cmp = -1;
+    else if (va > vb) cmp = 1;
+
+    return currentDir === "asc" ? cmp : -cmp;
+  });
+
+  // Re-append sorted rows
+  rows.forEach(function(row) { tbody.appendChild(row); });
+
+  // Save sort preference
+  try { localStorage.setItem("gp_sort", col + ":" + currentDir); } catch(e) {}
+}
+
+// Restore saved sort on load
+(function() {
+  try {
+    var saved = localStorage.getItem("gp_sort");
+    if (saved) {
+      var parts = saved.split(":");
+      var col = parts[0];
+      var header = document.querySelector('[data-col="'+col+'"]');
+      if (header) {
+        currentSort = col;
+        currentDir = parts[1] === "desc" ? "asc" : "desc"; // will toggle
+        sortTable(col, header.getAttribute("data-type"));
+      }
+    }
+  } catch(e) {}
+})();
+
+// Search filter
+document.getElementById("repo-search").addEventListener("input", function() {
+  var q = this.value.toLowerCase();
+  document.querySelectorAll(".repo-row").forEach(function(row) {
+    var name = row.getAttribute("data-name").toLowerCase();
+    var lang = row.getAttribute("data-language").toLowerCase();
+    row.style.display = (name.indexOf(q) >= 0 || lang.indexOf(q) >= 0) ? "" : "none";
+  });
+});
+</script>
+
+<!-- Clone All Modal -->
+<div id="clone-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:100">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto">
+    <h2 style="margin-bottom:16px">⬇ Clone All Repos</h2>
+    <div class="form-group">
+      <label>Destination folder</label>
+      <input type="text" id="clone-dest" value="~/repos" style="width:100%">
+    </div>
+    <div id="clone-status" style="display:none;margin:16px 0">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span id="clone-progress-text">Cloning...</span>
+        <span id="clone-progress-count">0 / 0</span>
+      </div>
+      <div style="background:var(--border);border-radius:6px;height:8px;overflow:hidden">
+        <div id="clone-progress-bar" style="background:var(--accent);height:100%;width:0%;transition:width .3s"></div>
+      </div>
+      <div id="clone-log" style="margin-top:12px;font-size:.85em;max-height:300px;overflow-y:auto;font-family:monospace"></div>
+    </div>
+    <div id="clone-summary" style="display:none;margin:16px 0;padding:12px;border-radius:8px;background:rgba(255,255,255,.05)"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" onclick="closeCloneModal()">Close</button>
+      <button class="btn btn-primary" id="clone-start-btn" onclick="startBulkClone()">Clone {{total}} repos</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openCloneModal() {
+  var m = document.getElementById("clone-modal");
+  m.style.display = "flex";
+  document.getElementById("clone-status").style.display = "none";
+  document.getElementById("clone-summary").style.display = "none";
+  document.getElementById("clone-log").innerHTML = "";
+  document.getElementById("clone-start-btn").disabled = false;
+  document.getElementById("clone-start-btn").textContent = "Clone {{total}} repos";
+}
+
+function closeCloneModal() {
+  document.getElementById("clone-modal").style.display = "none";
+}
+
+async function startBulkClone() {
+  var dest = document.getElementById("clone-dest").value.trim();
+  if (!dest) { alert("Enter a destination folder"); return; }
+
+  var btn = document.getElementById("clone-start-btn");
+  btn.disabled = true;
+  btn.textContent = "Cloning...";
+
+  document.getElementById("clone-status").style.display = "block";
+  document.getElementById("clone-summary").style.display = "none";
+
+  var log = document.getElementById("clone-log");
+  var bar = document.getElementById("clone-progress-bar");
+  var countEl = document.getElementById("clone-progress-count");
+  var textEl = document.getElementById("clone-progress-text");
+  log.innerHTML = "";
+
+  // Get all repo names from the table
+  var rows = document.querySelectorAll(".repo-row");
+  var repos = [];
+  rows.forEach(function(r) { repos.push(r.getAttribute("data-name")); });
+
+  var total = repos.length;
+  var cloned = 0, skipped = 0, failed = 0;
+
+  for (var i = 0; i < repos.length; i++) {
+    var name = repos[i];
+    countEl.textContent = (i + 1) + " / " + total;
+    textEl.textContent = "Cloning " + name + "...";
+    bar.style.width = ((i + 1) / total * 100) + "%";
+
+    try {
+      var resp = await fetch("/api/clone", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({name: name, dest: dest})
+      });
+      var data = await resp.json();
+
+      if (data.status === "cloned") {
+        log.innerHTML += '<div style="color:#4ade80">✓ ' + name + '</div>';
+        cloned++;
+      } else if (data.status === "skipped") {
+        log.innerHTML += '<div style="color:#facc15">⊘ ' + name + ' (already exists)</div>';
+        skipped++;
+      } else {
+        log.innerHTML += '<div style="color:#f87171">✗ ' + name + ': ' + (data.error || "failed") + '</div>';
+        failed++;
+      }
+    } catch (e) {
+      log.innerHTML += '<div style="color:#f87171">✗ ' + name + ': ' + e.message + '</div>';
+      failed++;
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+
+  textEl.textContent = "Done!";
+  btn.textContent = "Done";
+
+  var summary = document.getElementById("clone-summary");
+  summary.style.display = "block";
+  summary.innerHTML = '<span style="color:#4ade80;font-weight:600">✓ ' + cloned + ' cloned</span> · ' +
+    '<span style="color:#facc15">' + skipped + ' skipped</span> · ' +
+    '<span style="color:#f87171">' + failed + ' failed</span>';
+}
+
+// Close on backdrop click
+document.getElementById("clone-modal").addEventListener("click", function(e) {
+  if (e.target === this) closeCloneModal();
+});
+</script>
+
+<!-- Visibility Modal -->
+<div id="vis-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:100">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto">
+    <h2 id="vis-title" style="margin-bottom:16px">🔒 Make All Private</h2>
+    <p id="vis-warning" style="color:#facc15;margin-bottom:16px"></p>
+    <div id="vis-status" style="display:none;margin:16px 0">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span id="vis-progress-text">Updating...</span>
+        <span id="vis-progress-count">0 / 0</span>
+      </div>
+      <div style="background:var(--border);border-radius:6px;height:8px;overflow:hidden">
+        <div id="vis-progress-bar" style="background:var(--accent);height:100%;width:0%;transition:width .3s"></div>
+      </div>
+      <div id="vis-log" style="margin-top:12px;font-size:.85em;max-height:300px;overflow-y:auto;font-family:monospace"></div>
+    </div>
+    <div id="vis-summary" style="display:none;margin:16px 0;padding:12px;border-radius:8px;background:rgba(255,255,255,.05)"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" onclick="closeVisModal()">Close</button>
+      <button class="btn btn-primary" id="vis-start-btn" onclick="startBulkVisibility()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var _visPrivate = true;
+
+function openVisibilityModal(makePrivate) {
+  _visPrivate = makePrivate;
+  var m = document.getElementById("vis-modal");
+  m.style.display = "flex";
+  var rows = document.querySelectorAll(".repo-row");
+  var count = rows.length;
+  var label = makePrivate ? "🔒 Make All Private" : "🌐 Make All Public";
+  document.getElementById("vis-title").textContent = label;
+  document.getElementById("vis-warning").textContent = "This will change visibility of " + count + " repos. Already " + (makePrivate ? "private" : "public") + " repos will be skipped.";
+  document.getElementById("vis-status").style.display = "none";
+  document.getElementById("vis-summary").style.display = "none";
+  document.getElementById("vis-log").innerHTML = "";
+  document.getElementById("vis-start-btn").disabled = false;
+  document.getElementById("vis-start-btn").textContent = "Confirm";
+}
+
+function closeVisModal() {
+  document.getElementById("vis-modal").style.display = "none";
+}
+
+async function startBulkVisibility() {
+  var btn = document.getElementById("vis-start-btn");
+  btn.disabled = true;
+  btn.textContent = "Updating...";
+
+  document.getElementById("vis-status").style.display = "block";
+  document.getElementById("vis-summary").style.display = "none";
+
+  var log = document.getElementById("vis-log");
+  var bar = document.getElementById("vis-progress-bar");
+  var countEl = document.getElementById("vis-progress-count");
+  var textEl = document.getElementById("vis-progress-text");
+  log.innerHTML = "";
+
+  var rows = document.querySelectorAll(".repo-row");
+  var repos = [];
+  rows.forEach(function(r) {
+    repos.push({name: r.getAttribute("data-name"), visibility: r.getAttribute("data-visibility")});
+  });
+
+  var total = repos.length;
+  var changed = 0, skipped = 0, failed = 0;
+  var targetVis = _visPrivate ? "private" : "public";
+
+  for (var i = 0; i < repos.length; i++) {
+    var repo = repos[i];
+    countEl.textContent = (i + 1) + " / " + total;
+    textEl.textContent = "Updating " + repo.name + "...";
+    bar.style.width = ((i + 1) / total * 100) + "%";
+
+    if (repo.visibility.toLowerCase() === targetVis) {
+      log.innerHTML += '<div style="color:#facc15">⊘ ' + repo.name + ' (already ' + targetVis + ')</div>';
+      skipped++;
+      continue;
+    }
+
+    try {
+      var resp = await fetch("/api/repo/" + repo.name + "/visibility", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({"private": _visPrivate})
+      });
+      var data = await resp.json();
+      if (data.ok) {
+        log.innerHTML += '<div style="color:#4ade80">✓ ' + repo.name + ' → ' + targetVis + '</div>';
+        changed++;
+        // Update table row
+        rows[i].setAttribute("data-visibility", targetVis);
+        rows[i].querySelectorAll("td")[1].textContent = targetVis;
+      } else {
+        log.innerHTML += '<div style="color:#f87171">✗ ' + repo.name + ': ' + (data.error || "failed") + '</div>';
+        failed++;
+      }
+    } catch (e) {
+      log.innerHTML += '<div style="color:#f87171">✗ ' + repo.name + ': ' + e.message + '</div>';
+      failed++;
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+
+  textEl.textContent = "Done!";
+  btn.textContent = "Done";
+
+  var summary = document.getElementById("vis-summary");
+  summary.style.display = "block";
+  summary.innerHTML = '<span style="color:#4ade80;font-weight:600">✓ ' + changed + ' changed</span> · ' +
+    '<span style="color:#facc15">' + skipped + ' skipped</span> · ' +
+    '<span style="color:#f87171">' + failed + ' failed</span>';
+}
+
+document.getElementById("vis-modal").addEventListener("click", function(e) {
+  if (e.target === this) closeVisModal();
+});
+</script>
+
+<!-- Pages Modal -->
+<div id="pages-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:100">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;max-width:540px;width:90%;max-height:80vh;overflow-y:auto">
+    <h2 id="pages-title" style="margin-bottom:16px">📄 Disable GitHub Pages</h2>
+    <p id="pages-desc" style="color:#facc15;margin-bottom:16px">This will disable GitHub Pages on all repos that have it enabled. The code is NOT affected.</p>
+    <div id="pages-status" style="display:none;margin:16px 0">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span id="pages-progress-text">Scanning...</span>
+        <span id="pages-progress-count">0 / 0</span>
+      </div>
+      <div style="background:var(--border);border-radius:6px;height:8px;overflow:hidden">
+        <div id="pages-progress-bar" style="background:var(--accent);height:100%;width:0%;transition:width .3s"></div>
+      </div>
+      <div id="pages-log" style="margin-top:12px;font-size:.85em;max-height:300px;overflow-y:auto;font-family:monospace"></div>
+    </div>
+    <div id="pages-summary" style="display:none;margin:16px 0;padding:12px;border-radius:8px;background:rgba(255,255,255,.05)"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" onclick="closePagesModal()">Close</button>
+      <button class="btn" id="pages-start-btn" onclick="startBulkPages()" style="background:#ef4444;color:#fff">Disable All Pages</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var _pagesEnable = false;
+
+function openPagesModal(enable) {
+  _pagesEnable = enable;
+  var m = document.getElementById("pages-modal");
+  m.style.display = "flex";
+  document.getElementById("pages-status").style.display = "none";
+  document.getElementById("pages-summary").style.display = "none";
+  document.getElementById("pages-log").innerHTML = "";
+
+  var btn = document.getElementById("pages-start-btn");
+  btn.disabled = false;
+
+  if (enable) {
+    document.getElementById("pages-title").textContent = "📄 Enable GitHub Pages";
+    document.getElementById("pages-desc").textContent = "This will enable GitHub Pages on all repos. Repos that already have Pages will be skipped.";
+    btn.textContent = "Enable All Pages";
+    btn.style.background = "#3b82f6";
+  } else {
+    document.getElementById("pages-title").textContent = "📄 Disable GitHub Pages";
+    document.getElementById("pages-desc").textContent = "This will disable GitHub Pages on all repos that have it enabled. The code is NOT affected.";
+    btn.textContent = "Disable All Pages";
+    btn.style.background = "#ef4444";
+  }
+}
+
+function closePagesModal() {
+  document.getElementById("pages-modal").style.display = "none";
+}
+
+async function startBulkPages() {
+  var btn = document.getElementById("pages-start-btn");
+  btn.disabled = true;
+  btn.textContent = "Working...";
+
+  document.getElementById("pages-status").style.display = "block";
+  document.getElementById("pages-summary").style.display = "none";
+
+  var log = document.getElementById("pages-log");
+  var bar = document.getElementById("pages-progress-bar");
+  var countEl = document.getElementById("pages-progress-count");
+  var textEl = document.getElementById("pages-progress-text");
+  log.innerHTML = "";
+
+  var rows = document.querySelectorAll(".repo-row");
+  var repos = [];
+  rows.forEach(function(r) { repos.push(r.getAttribute("data-name")); });
+
+  var total = repos.length;
+  var changed = 0, skipped = 0, failed = 0;
+  var actionLabel = _pagesEnable ? "enabled" : "disabled";
+
+  for (var i = 0; i < repos.length; i++) {
+    var name = repos[i];
+    countEl.textContent = (i + 1) + " / " + total;
+    textEl.textContent = "Checking " + name + "...";
+    bar.style.width = ((i + 1) / total * 100) + "%";
+
+    try {
+      var checkResp = await fetch("/api/repo/" + name + "/pages");
+      var checkData = await checkResp.json();
+
+      if (_pagesEnable && checkData.enabled) {
+        log.innerHTML += '<div style="color:#facc15">⊘ ' + name + ' (already enabled)</div>';
+        skipped++;
+        continue;
+      }
+      if (!_pagesEnable && !checkData.enabled) {
+        log.innerHTML += '<div style="color:#facc15">⊘ ' + name + ' (no pages)</div>';
+        skipped++;
+        continue;
+      }
+
+      textEl.textContent = (_pagesEnable ? "Enabling " : "Disabling ") + name + "...";
+      var resp = await fetch("/api/repo/" + name + "/pages", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({enable: _pagesEnable, branch: "main", path: "/"})
+      });
+      var data = await resp.json();
+
+      if (data.ok) {
+        log.innerHTML += '<div style="color:#4ade80">✓ ' + name + ' — pages ' + actionLabel + '</div>';
+        changed++;
+      } else {
+        log.innerHTML += '<div style="color:#f87171">✗ ' + name + ': ' + (data.error || "failed") + '</div>';
+        failed++;
+      }
+    } catch (e) {
+      log.innerHTML += '<div style="color:#f87171">✗ ' + name + ': ' + e.message + '</div>';
+      failed++;
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+
+  textEl.textContent = "Done!";
+  btn.textContent = "Done";
+
+  var summary = document.getElementById("pages-summary");
+  summary.style.display = "block";
+  summary.innerHTML = '<span style="color:#4ade80;font-weight:600">✓ ' + changed + ' ' + actionLabel + '</span> · ' +
+    '<span style="color:#facc15">' + skipped + ' skipped</span> · ' +
+    '<span style="color:#f87171">' + failed + ' failed</span>';
+}
+
+document.getElementById("pages-modal").addEventListener("click", function(e) {
+  if (e.target === this) closePagesModal();
+});
+</script>
+
+{{include footer.html}}

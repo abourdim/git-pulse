@@ -1,0 +1,254 @@
+{{include header.html}}
+
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+  <div>
+    <h1>{{repo.name}} <span id="vis-badge" style="font-size:.55em;padding:4px 12px;border-radius:999px;vertical-align:middle;font-weight:600;{{if is_private}}background:var(--danger,#e74c3c);color:#fff{{else}}background:var(--accent);color:var(--bg){{endif}}">{{if is_private}}Private{{else}}Public{{endif}}</span>
+    {{if is_archived}}<span style="font-size:.55em;padding:4px 12px;border-radius:999px;vertical-align:middle;font-weight:600;background:var(--warn,#f39c12);color:#000">Archived</span>{{endif}}
+    </h1>
+    <p style="color:var(--text-dim)">{{repo.description}}</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn" onclick="document.getElementById('edit-panel').style.display=document.getElementById('edit-panel').style.display==='none'?'block':'none'" style="min-width:100px">✏️ Edit</button>
+    <a href="/repo/{{repo.name}}/files" style="padding:8px 18px;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--band2));color:var(--bg);font-weight:700;font-size:.78rem;text-decoration:none;display:inline-flex;align-items:center;gap:5px;box-shadow:0 4px 14px var(--glow)">📁 Files & Editor</a>
+    <a href="{{repo.html_url}}" target="_blank" class="btn">View on GitHub</a>
+    <button class="btn" onclick="squashRepo()" style="background:#8e44ad;color:#fff;border:none">Squash</button>
+    <button class="btn btn-danger" onclick="deleteRepo()">Delete</button>
+  </div>
+</div>
+
+<!-- Edit Panel -->
+<div id="edit-panel" class="section" style="display:none;margin-top:16px;border:1px solid var(--border);border-radius:12px;padding:24px;background:var(--surface)">
+  <h2 style="margin-bottom:16px">Edit Repository</h2>
+  <div id="edit-msg" style="display:none;padding:10px 16px;border-radius:8px;margin-bottom:12px;font-weight:600"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="form-group">
+      <label style="color:var(--text-dim);font-size:.85em">Name</label>
+      <input id="ed-name" type="text" value="{{repo.name}}" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)">
+    </div>
+    <div class="form-group">
+      <label style="color:var(--text-dim);font-size:.85em">Description</label>
+      <input id="ed-desc" type="text" value="{{repo.description}}" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)">
+    </div>
+    <div class="form-group">
+      <label style="color:var(--text-dim);font-size:.85em">Homepage URL</label>
+      <input id="ed-homepage" type="text" value="{{repo.homepage}}" placeholder="https://example.com" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)">
+    </div>
+    <div class="form-group">
+      <label style="color:var(--text-dim);font-size:.85em">Default Branch</label>
+      <input id="ed-branch" type="text" value="{{repo.default_branch}}" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)">
+    </div>
+    <div class="form-group" style="grid-column:1/-1">
+      <label style="color:var(--text-dim);font-size:.85em">Topics (comma-separated)</label>
+      <input id="ed-topics" type="text" value="{{repo_topics}}" placeholder="python, api, cli" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)">
+    </div>
+    <div class="form-group">
+      <label style="color:var(--text-dim);font-size:.85em">Visibility</label>
+      <select id="ed-vis" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)">
+        <option value="public" {{if is_private}}{{else}}selected{{endif}}>Public</option>
+        <option value="private" {{if is_private}}selected{{else}}{{endif}}>Private</option>
+      </select>
+    </div>
+    <div class="form-group" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;padding-top:22px">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+        <input id="ed-wiki" type="checkbox" {{if has_wiki}}checked{{endif}}> Wiki
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+        <input id="ed-issues" type="checkbox" {{if has_issues}}checked{{endif}}> Issues
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+        <input id="ed-archived" type="checkbox" {{if is_archived}}checked{{endif}}> Archived
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+        <input id="ed-pages" type="checkbox" {{if has_pages}}checked{{endif}}> GitHub Pages
+      </label>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+    <button class="btn" onclick="document.getElementById('edit-panel').style.display='none'">Cancel</button>
+    <button id="ed-save" class="btn btn-primary" onclick="saveEdit()" style="background:var(--accent);color:var(--bg);font-weight:700;padding:8px 24px;border-radius:999px;border:none;cursor:pointer">Save Changes</button>
+  </div>
+</div>
+
+<div class="card-grid" style="margin-top:16px">
+  <div class="card"><h3>{{repo.stargazers_count}}</h3><p>Stars</p></div>
+  <div class="card"><h3>{{repo.forks_count}}</h3><p>Forks</p></div>
+  <div class="card"><h3>{{repo.open_issues_count}}</h3><p>Open Issues</p></div>
+  <div class="card"><h3>{{repo.size}}</h3><p>Size (KB)</p></div>
+</div>
+
+<div class="section">
+  <h2>Info</h2>
+  <table class="table">
+    <tr><td style="color:var(--text-dim)">Clone URL</td><td><code>{{repo.clone_url}}</code></td></tr>
+    <tr><td style="color:var(--text-dim)">Default Branch</td><td>{{repo.default_branch}}</td></tr>
+    <tr><td style="color:var(--text-dim)">Homepage</td><td>{{repo.homepage}}</td></tr>
+    <tr><td style="color:var(--text-dim)">Wiki</td><td>{{if has_wiki}}Enabled{{else}}Disabled{{endif}}</td></tr>
+    <tr><td style="color:var(--text-dim)">Issues</td><td>{{if has_issues}}Enabled{{else}}Disabled{{endif}}</td></tr>
+    <tr><td style="color:var(--text-dim)">GitHub Pages</td><td id="pages-status"></td></tr>
+    <script>
+    (function(){
+      var td = document.getElementById("pages-status");
+      var on = {{if has_pages}}true{{else}}false{{endif}};
+      var url = "{{pages_url}}";
+      if (on) {
+        td.innerHTML = '<span style="color:var(--accent);font-weight:600">Active</span>' +
+          (url ? ' — <a href="'+url+'" target="_blank">'+url+'</a>' : '') +
+          ' <button onclick="togglePages(false)" class="btn" style="margin-left:12px;padding:4px 14px;font-size:.8rem;background:#e74c3c;color:#fff;border:none;border-radius:6px;cursor:pointer">Disable Pages</button>';
+      } else {
+        td.innerHTML = '<span style="opacity:.6">Disabled</span>' +
+          ' <button onclick="togglePages(true)" class="btn" style="margin-left:12px;padding:4px 14px;font-size:.8rem;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer">Enable Pages</button>';
+      }
+    })();
+    </script>
+    <tr><td style="color:var(--text-dim)">Created</td><td>{{repo.created_at}}</td></tr>
+    <tr><td style="color:var(--text-dim)">Last Push</td><td>{{repo.pushed_at}}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Languages</h2>
+  <div class="lang-bar">
+    {{for lang in langs}}
+    <div class="lang-segment" style="width:{{lang.1}}%;background:var(--accent);opacity:{{lang.opacity}}" title="{{lang.0}}: {{lang.1}}%"></div>
+    {{endfor}}
+  </div>
+  {{for lang in langs}}
+  <span class="badge badge-lang" style="margin:2px">{{lang.0}} {{lang.1}}%</span>
+  {{endfor}}
+</div>
+
+<div class="section">
+  <h2>Recent Commits</h2>
+  <table class="table">
+    <thead><tr><th>SHA</th><th>Message</th><th>Author</th><th>Date</th></tr></thead>
+    <tbody>
+      {{for c in commits}}
+      <tr>
+        <td style="font-family:monospace;color:var(--warn)">{{c.sha}}</td>
+        <td>{{c.commit.message}}</td>
+        <td style="color:var(--text-dim)">{{c.commit.author.name}}</td>
+        <td style="color:var(--text-dim)">{{c.commit.author.date}}</td>
+      </tr>
+      {{endfor}}
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Branches</h2>
+  {{for b in branches}}
+  <span class="badge badge-lang" style="margin:2px">{{b.name}}</span>
+  {{endfor}}
+</div>
+
+<script>
+var repoName = "{{repo.name}}";
+
+function squashRepo() {
+  var msg = prompt("Squash all commits into one.\nCommit message:", "Initial commit");
+  if (msg === null) return;
+  if (!confirm("This will replace ALL commit history with a single commit. This cannot be undone.\n\nContinue?")) return;
+  fetch("/api/repo/" + repoName + "/squash", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({message: msg})
+  }).then(r => r.json()).then(d => {
+    if (d.ok) { alert("Squashed! New SHA: " + d.sha); location.reload(); }
+    else { alert("Failed: " + (d.error || "unknown")); }
+  }).catch(e => alert("Error: " + e));
+}
+
+function togglePages(enable) {
+  var btn = event.target;
+  btn.disabled = true; btn.textContent = enable ? "Enabling..." : "Disabling...";
+  fetch("/api/repo/" + repoName + "/pages", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({enable: enable, branch: "main", path: "/"})
+  }).then(r => r.json()).then(d => {
+    if (d.ok) { location.reload(); }
+    else { alert("Failed: " + (d.error || "unknown")); btn.disabled = false; btn.textContent = enable ? "Enable Pages" : "Disable Pages"; }
+  }).catch(e => { alert("Error: " + e); btn.disabled = false; });
+}
+
+function saveEdit() {
+  var btn = document.getElementById("ed-save");
+  var msg = document.getElementById("edit-msg");
+  btn.disabled = true;
+  btn.textContent = "Saving...";
+  msg.style.display = "none";
+
+  var payload = {
+    name: document.getElementById("ed-name").value.trim(),
+    description: document.getElementById("ed-desc").value.trim(),
+    homepage: document.getElementById("ed-homepage").value.trim(),
+    default_branch: document.getElementById("ed-branch").value.trim(),
+    topics: document.getElementById("ed-topics").value.trim(),
+    private: document.getElementById("ed-vis").value === "private",
+    has_wiki: document.getElementById("ed-wiki").checked,
+    has_issues: document.getElementById("ed-issues").checked,
+    archived: document.getElementById("ed-archived").checked
+  };
+
+  // Handle Pages toggle separately
+  var pagesChecked = document.getElementById("ed-pages").checked;
+  var pagesWas = {{if has_pages}}true{{else}}false{{endif}};
+  var pagesPromise = Promise.resolve();
+  if (pagesChecked !== pagesWas) {
+    pagesPromise = fetch("/api/repo/" + repoName + "/pages", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({enable: pagesChecked, branch: "main", path: "/"})
+    }).then(function(r) { return r.json(); });
+  }
+
+  Promise.all([
+    fetch("/api/repo/" + repoName + "/edit", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload)
+    }).then(function(r) { return r.json(); }),
+    pagesPromise
+  ])
+  .then(function(results) {
+    var data = results[0];
+    btn.disabled = false;
+    btn.textContent = "Save Changes";
+    if (data.ok) {
+      msg.style.display = "block";
+      msg.style.background = "var(--accent)";
+      msg.style.color = "var(--bg)";
+      msg.textContent = "Saved successfully!";
+      if (payload.name && payload.name !== repoName) {
+        setTimeout(function() { window.location.href = "/repo/" + payload.name; }, 800);
+      } else {
+        setTimeout(function() { window.location.reload(); }, 800);
+      }
+    } else {
+      msg.style.display = "block";
+      msg.style.background = "var(--danger,#e74c3c)";
+      msg.style.color = "#fff";
+      msg.textContent = "Error: " + (data.error || "Failed to save");
+    }
+  })
+  .catch(function(err) {
+    btn.disabled = false;
+    btn.textContent = "Save Changes";
+    msg.style.display = "block";
+    msg.style.background = "var(--danger,#e74c3c)";
+    msg.style.color = "#fff";
+    msg.textContent = "Error: " + err;
+  });
+}
+
+function deleteRepo() {
+  if (!confirm("Permanently delete '" + repoName + "'? This cannot be undone.")) return;
+  if (!confirm("Are you absolutely sure?")) return;
+  fetch("/api/repo/" + repoName + "/delete", {method: "POST", headers: {"Content-Type": "application/json"}, body: "{}"})
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.deleted) { window.location.href = "/repos"; }
+    else { alert("Delete failed"); }
+  });
+}
+</script>
+
+{{include footer.html}}

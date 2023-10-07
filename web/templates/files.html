@@ -1,0 +1,819 @@
+{{include header.html}}
+
+<style>
+/* Override content padding on files page for maximum workspace room */
+.content{padding:10px 12px 16px !important}
+.file-workspace{display:flex;flex-direction:row;flex-wrap:nowrap;height:calc(100vh - 220px);min-height:400px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);overflow:hidden}
+.file-tree{width:220px;min-width:140px;flex-shrink:1;border-right:1px solid var(--border);overflow-y:auto;background:rgba(0,0,0,.15);padding:8px 0}
+.file-main{flex:2;display:flex;flex-direction:column;min-width:200px;overflow:hidden}
+.file-toolbar{display:flex;align-items:center;gap:4px;padding:6px 10px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.file-toolbar button{padding:3px 8px;font-size:.68rem;border-radius:8px;background:rgba(0,0,0,.3);color:var(--text);border:1px solid var(--border);white-space:nowrap}
+.file-toolbar button:hover{border-color:var(--accent);box-shadow:0 0 8px var(--glow)}
+.file-toolbar button.active{background:var(--accent);color:var(--bg)}
+.file-toolbar .separator{width:1px;height:18px;background:var(--border);opacity:.5}
+.file-viewer{flex:1;overflow:auto;padding:0}
+.file-breadcrumb{padding:6px 14px;font-size:.72rem;color:var(--text-dim);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:4px}
+.file-breadcrumb a{color:var(--accent);cursor:pointer;text-decoration:none}
+.file-breadcrumb a:hover{text-decoration:underline}
+
+/* Tree */
+.tree-search{width:calc(100% - 16px);margin:0 8px 8px;padding:5px 10px;border-radius:8px;background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--text);font-size:.75rem;font-family:var(--font-b)}
+.tree-item{display:flex;align-items:center;gap:6px;padding:3px 8px 3px 12px;cursor:pointer;font-size:.75rem;color:var(--text-dim);transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tree-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.tree-item.active{background:var(--glow);color:var(--accent);border-left:2px solid var(--accent)}
+.tree-item.folder{color:var(--accent);font-weight:500}
+.tree-item .icon{width:16px;text-align:center;flex-shrink:0;font-size:.85rem}
+.tree-item .size{margin-left:auto;font-size:.6rem;color:var(--text-dim);opacity:.5}
+.tree-item .badge-warn{margin-left:auto;background:#f8514930;color:#f85149;font-size:.55rem;padding:0 4px;border-radius:4px}
+.tree-indent{padding-left:20px}
+
+/* Code viewer */
+.code-view{font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace;font-size:.78rem;line-height:1.65;padding:12px;white-space:pre;overflow-x:auto;tab-size:4;color:var(--text)}
+.code-line{display:flex}
+.code-num{width:45px;text-align:right;padding-right:12px;color:var(--text-dim);opacity:.4;user-select:none;flex-shrink:0}
+.code-text{flex:1;min-width:0}
+.code-line:hover{background:rgba(255,255,255,.02)}
+.code-line.highlight{background:rgba(255,200,0,.08)}
+.code-line .kw{color:#c084fc}.code-line .str{color:#86efac}.code-line .cmt{color:var(--text-dim);font-style:italic}
+.code-line .fn{color:#38bdf8}.code-line .num{color:#fb923c}
+.code-line .dec{color:#f472b6}.code-line .tag{color:#f87171}.code-line .atr{color:#fbbf24}
+.code-line .prop{color:#67e8f9}.code-line .sel{color:#a78bfa}
+
+/* Editor */
+.editor-area{width:100%;height:100%;background:transparent;color:var(--text);border:none;resize:none;font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace;font-size:.78rem;line-height:1.65;padding:12px;outline:none;tab-size:4}
+.editor-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(0,0,0,.2);border-top:1px solid var(--border)}
+.editor-bar input{flex:1;padding:5px 10px;border-radius:8px;background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--text);font-size:.75rem;font-family:var(--font-b)}
+.editor-bar button{padding:5px 14px;font-size:.72rem}
+
+/* Markdown preview */
+.md-preview{padding:16px 20px;line-height:1.7;font-size:.85rem}
+.md-preview h1{font-size:1.5rem;margin:0 0 12px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:8px}
+.md-preview h2{font-size:1.15rem;margin:16px 0 8px;color:var(--accent2)}
+.md-preview h3{font-size:1rem;margin:12px 0 6px;color:var(--text)}
+.md-preview p{margin:6px 0}
+.md-preview code{background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px;font-size:.8rem;font-family:monospace}
+.md-preview pre{background:rgba(0,0,0,.3);padding:12px;border-radius:8px;overflow-x:auto;margin:8px 0}
+.md-preview pre code{background:none;padding:0}
+.md-preview blockquote{border-left:3px solid var(--accent);padding-left:12px;color:var(--text-dim);margin:8px 0}
+.md-preview table{border-collapse:collapse;width:100%;margin:8px 0}
+.md-preview th,.md-preview td{border:1px solid var(--border);padding:6px 10px;text-align:left}
+.md-preview img{max-width:100%;border-radius:8px}
+.md-preview a{color:var(--accent)}
+.md-preview ul,.md-preview ol{padding-left:24px;margin:6px 0}
+
+/* Panels */
+.panel-results{padding:12px;max-height:100%;overflow-y:auto}
+.result-item{padding:6px 10px;border-radius:6px;margin-bottom:4px;font-size:.75rem;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.result-item:hover{border-color:var(--accent);background:rgba(255,255,255,.02)}
+.result-item .path{color:var(--accent);font-weight:500}
+.result-item .line-num{color:var(--text-dim);margin-left:4px;font-size:.65rem}
+.result-item .text{display:block;font-family:monospace;font-size:.72rem;color:var(--text-dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.result-kw{display:inline-block;padding:0 5px;border-radius:3px;font-size:.6rem;font-weight:700;margin-right:4px}
+.kw-todo{background:#fbbf2430;color:#fbbf24}
+.kw-fixme{background:#f8514930;color:#f85149}
+.kw-hack{background:#c084fc30;color:#c084fc}
+.kw-secret{background:#f8514940;color:#f85149}
+
+/* Empty state */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-dim);gap:12px;text-align:center;padding:40px}
+.empty-state .big-icon{font-size:3rem;opacity:.3}
+.empty-state p{font-size:.85rem}
+
+/* Split view */
+.split-view{display:flex;height:100%;min-height:300px}
+.split-view .split-left,.split-view .split-right{flex:1;overflow:auto;padding:16px 20px}
+.split-view .split-left{background:rgba(0,0,0,.08)}
+.split-view .split-divider{width:2px;background:var(--border);flex-shrink:0}
+
+/* Genius features panel */
+.genius-panel{padding:16px;overflow-y:auto}
+.genius-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.genius-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 8px;border-radius:10px;background:rgba(0,0,0,.2);border:1px solid var(--border);cursor:pointer;transition:all .2s;color:var(--text)}
+.genius-btn:hover{border-color:var(--accent);box-shadow:0 0 12px var(--glow);transform:translateY(-1px)}
+.genius-btn .g-icon{font-size:1.5rem}
+.genius-btn .g-label{font-size:.7rem;font-weight:600;text-align:center}
+.genius-btn .g-desc{font-size:.6rem;color:var(--text-dim);text-align:center}
+
+/* Inject dialog */
+.inject-dialog{padding:16px}
+.inject-option{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:all .2s}
+.inject-option:hover{border-color:var(--accent);background:rgba(255,255,255,.02)}
+.inject-option .io-icon{font-size:1.3rem}
+.inject-option .io-name{font-weight:600;font-size:.8rem}
+.inject-option .io-desc{font-size:.68rem;color:var(--text-dim)}
+
+@media(max-width:860px){
+  .file-workspace{flex-direction:column;height:auto;min-height:auto}
+  .file-tree{width:100%;min-width:100%;max-height:200px;border-right:none;border-bottom:1px solid var(--border)}
+  .file-main{min-width:100%}
+  .genius-grid{grid-template-columns:1fr}
+  .file-toolbar{flex-wrap:wrap}
+}
+/* Ultra narrow (sidebar open + devtools) */
+@media(max-width:500px){
+  .file-tree{width:100%;min-width:100%}
+  .file-toolbar button{padding:3px 6px;font-size:.6rem}
+}
+</style>
+
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+  <h2 style="margin:0">📁 {{repo_name}}</h2>
+  <a href="/repo/{{repo_name}}" style="font-size:.75rem" data-i18n="btn_back_repo">← Back to repo</a>
+</div>
+
+<div class="file-workspace" id="fileWorkspace">
+  <!-- FILE TREE -->
+  <div class="file-tree" id="fileTree">
+    <input type="text" class="tree-search" placeholder="🔍 Filter files..." id="treeSearch" data-i18n="filter_files" data-i18n-attr="placeholder">
+    <div id="treeContainer"></div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div class="file-main">
+    <div class="file-toolbar">
+      <button onclick="showView('viewer')" id="btnView" class="active">👁 <span data-i18n="btn_view">View</span></button>
+      <button onclick="showView('edit')" id="btnEdit">✏️ <span data-i18n="btn_edit">Edit</span></button>
+      <button onclick="showView('preview')" id="btnPreview">📖 <span data-i18n="btn_preview">Preview</span></button>
+      <span class="separator"></span>
+      <button onclick="newFile()">＋ <span data-i18n="btn_new">New</span></button>
+      <button onclick="uploadFile()">⬆ <span data-i18n="btn_upload">Upload</span></button>
+      <button onclick="deleteCurrentFile()" id="btnDelete" style="display:none;color:#f85149">🗑 <span data-i18n="btn_delete">Delete</span></button>
+      <span class="separator"></span>
+      <button onclick="showView('search')">🔍 <span data-i18n="btn_search">Search</span></button>
+      <button onclick="showView('todos')">📋 <span data-i18n="btn_todos">TODOs</span></button>
+      <button onclick="showView('secrets')">🔐 <span data-i18n="btn_secrets">Secrets</span></button>
+      <button onclick="showView('genius')">✨ <span data-i18n="btn_genius">Genius</span></button>
+    </div>
+
+    <div class="file-breadcrumb" id="breadcrumb">
+      <a onclick="goToFolder('')">{{repo_name}}</a>
+    </div>
+
+    <div class="file-viewer" id="fileViewer">
+      <div class="empty-state" id="emptyState">
+        <div class="big-icon">📂</div>
+        <p><span data-i18n="empty_select_file">Select a file from the tree</span><br><span data-i18n="empty_use_toolbar">or use the toolbar to create, upload, or explore</span></p>
+      </div>
+
+      <!-- Code viewer -->
+      <div class="code-view" id="codeView" style="display:none"></div>
+
+      <!-- Editor -->
+      <div id="editorPanel" style="display:none;height:100%;flex-direction:column">
+        <textarea class="editor-area" id="editorArea" spellcheck="false"></textarea>
+        <div class="editor-bar">
+          <input type="text" id="commitMsg" placeholder="Commit message..." data-i18n="commit_msg" data-i18n-attr="placeholder">
+          <button onclick="saveFile()" style="background:linear-gradient(135deg,var(--accent),var(--band2))">💾 <span data-i18n="btn_save">Save & Commit</span></button>
+        </div>
+      </div>
+
+      <!-- Markdown preview -->
+      <div class="md-preview" id="mdPreview" style="display:none"></div>
+
+      <!-- Split preview (code + rendered) -->
+      <div class="split-view" id="splitPreview" style="display:none">
+        <div class="split-left md-preview" id="splitLeft"></div>
+        <div class="split-divider"></div>
+        <div class="split-right md-preview" id="splitRight"></div>
+      </div>
+
+      <!-- Search results -->
+      <div class="panel-results" id="searchPanel" style="display:none">
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <input type="text" id="searchInput" placeholder="Search across all files..." style="flex:1;padding:8px 12px;border-radius:8px;background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--text);font-size:.8rem">
+          <button onclick="runSearch()" style="padding:6px 14px">Search</button>
+        </div>
+        <div id="searchResults"></div>
+      </div>
+
+      <!-- TODOs -->
+      <div class="panel-results" id="todoPanel" style="display:none">
+        <h3 style="margin-bottom:12px">📋 Inline TODO Tracker</h3>
+        <div id="todoResults"><p style="color:var(--text-dim)">Scanning...</p></div>
+      </div>
+
+      <!-- Secrets -->
+      <div class="panel-results" id="secretPanel" style="display:none">
+        <h3 style="margin-bottom:12px">🔐 Secret Scanner</h3>
+        <div id="secretResults"><p style="color:var(--text-dim)">Scanning...</p></div>
+      </div>
+
+      <!-- Genius features -->
+      <div class="genius-panel" id="geniusPanel" style="display:none">
+        <h3 style="margin-bottom:14px">✨ <span data-i18n="btn_genius">Genius Tools</span></h3>
+        <div class="genius-grid">
+          <div class="genius-btn" onclick="generateReadme()"><span class="g-icon">📝</span><span class="g-label" data-i18n="genius_readme">README Generator</span><span class="g-desc" data-i18n="genius_readme_desc">Auto-generate from repo analysis</span></div>
+          <div class="genius-btn" onclick="showView('inject')"><span class="g-icon">💉</span><span class="g-label" data-i18n="genius_templates">Template Injector</span><span class="g-desc" data-i18n="genius_templates_desc">.gitignore, LICENSE, CONTRIBUTING</span></div>
+          <div class="genius-btn" onclick="showView('todos')"><span class="g-icon">📋</span><span class="g-label" data-i18n="genius_todos">TODO Tracker</span><span class="g-desc" data-i18n="genius_todos_desc">Find all TODOs, FIXMEs, HACKs</span></div>
+          <div class="genius-btn" onclick="showView('secrets')"><span class="g-icon">🔐</span><span class="g-label" data-i18n="genius_secrets">Secret Scanner</span><span class="g-desc" data-i18n="genius_secrets_desc">Detect leaked API keys & passwords</span></div>
+          <div class="genius-btn" onclick="showView('search')"><span class="g-icon">🔍</span><span class="g-label" data-i18n="genius_search">Code Search</span><span class="g-desc" data-i18n="genius_search_desc">grep across entire repo</span></div>
+          <div class="genius-btn" onclick="showImageGallery()"><span class="g-icon">🖼️</span><span class="g-label" data-i18n="genius_gallery">Image Gallery</span><span class="g-desc" data-i18n="genius_gallery_desc">Browse all images as thumbnails</span></div>
+        </div>
+      </div>
+
+      <!-- Template injector -->
+      <div class="inject-dialog" id="injectPanel" style="display:none">
+        <h3 style="margin-bottom:14px">💉 Template Injector</h3>
+        <div class="inject-option" onclick="injectTemplate('gitignore-python')"><span class="io-icon">🐍</span><div><div class="io-name">.gitignore — Python</div><div class="io-desc">__pycache__, .venv, .env, .mypy_cache</div></div></div>
+        <div class="inject-option" onclick="injectTemplate('gitignore-node')"><span class="io-icon">🟢</span><div><div class="io-name">.gitignore — Node.js</div><div class="io-desc">node_modules, dist, build, .env</div></div></div>
+        <div class="inject-option" onclick="injectTemplate('gitignore-cpp')"><span class="io-icon">⚙️</span><div><div class="io-name">.gitignore — C/C++</div><div class="io-desc">build, *.o, *.so, cmake-build</div></div></div>
+        <div class="inject-option" onclick="injectTemplate('license-mit')"><span class="io-icon">📜</span><div><div class="io-name">LICENSE — MIT</div><div class="io-desc">Permissive open source license</div></div></div>
+        <div class="inject-option" onclick="injectTemplate('contributing')"><span class="io-icon">🤝</span><div><div class="io-name">CONTRIBUTING.md</div><div class="io-desc">Contribution guide template</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var REPO = "{{repo_name}}";
+var allFiles = [];
+var currentFile = null;
+var currentSha = null;
+var currentContent = "";
+var secretsCache = null;
+
+// ─── INIT ──────────────────────────────────────────────────────
+(function(){
+  fetch("/api/repo/"+REPO+"/tree").then(r=>r.json()).then(d=>{
+    allFiles = (d.tree||[]).filter(f=>f.type==="blob").sort((a,b)=>a.path.localeCompare(b.path));
+    renderTree(allFiles);
+    // Pre-scan secrets for badges
+    fetch("/api/repo/"+REPO+"/secrets").then(r=>r.json()).then(s=>{
+      secretsCache = s.secrets||[];
+      renderTree(allFiles); // re-render with badges
+    });
+  });
+  document.getElementById("treeSearch").addEventListener("input",function(){
+    var q = this.value.toLowerCase();
+    var filtered = allFiles.filter(f=>f.path.toLowerCase().includes(q));
+    renderTree(filtered);
+  });
+  document.getElementById("searchInput").addEventListener("keypress",function(e){
+    if(e.key==="Enter") runSearch();
+  });
+})();
+
+// ─── TREE ──────────────────────────────────────────────────────
+function renderTree(files){
+  var c = document.getElementById("treeContainer");
+  var html = "";
+  var folders = {};
+  files.forEach(function(f){
+    var parts = f.path.split("/");
+    if(parts.length > 1){
+      var dir = parts.slice(0,-1).join("/");
+      if(!folders[dir]){
+        folders[dir] = true;
+        var indent = (parts.length-2)*20;
+        html += '<div class="tree-item folder" style="padding-left:'+(12+indent)+'px" onclick="toggleFolder(this)"><span class="icon">📂</span>'+parts[parts.length-2]+'/</div>';
+      }
+    }
+    var icon = fileIcon(f.path);
+    var indent2 = (parts.length-1)*20;
+    var name = parts[parts.length-1];
+    var sizeStr = f.size > 1024 ? (f.size/1024).toFixed(1)+"K" : f.size+"B";
+    var warn = "";
+    if(secretsCache){
+      var sc = secretsCache.filter(function(s){return s.path===f.path});
+      if(sc.length) warn = '<span class="badge-warn">🔑'+sc.length+'</span>';
+    }
+    html += '<div class="tree-item" data-path="'+f.path+'" style="padding-left:'+(12+indent2)+'px" onclick="openFile(\''+f.path.replace(/'/g,"\\'")+'\')">';
+    html += '<span class="icon">'+icon+'</span>'+name+warn+'<span class="size">'+sizeStr+'</span></div>';
+  });
+  c.innerHTML = html;
+}
+
+function fileIcon(path){
+  var ext = path.split(".").pop().toLowerCase();
+  var icons = {py:"🐍",js:"🟨",ts:"🔷",cpp:"⚙️",c:"⚙️",h:"📎",java:"☕",rb:"💎",go:"🔵",rs:"🦀",
+    md:"📝",txt:"📄",json:"📋",yml:"📋",yaml:"📋",toml:"📋",ini:"📋",
+    html:"🌐",css:"🎨",svg:"🖼️",png:"🖼️",jpg:"🖼️",gif:"🖼️",
+    sh:"💻",bat:"💻",dockerfile:"🐳",sql:"🗄️",xml:"📰"};
+  if(path==="Dockerfile") return "🐳";
+  if(path==="Makefile") return "⚙️";
+  if(path==="LICENSE") return "📜";
+  return icons[ext] || "📄";
+}
+
+function toggleFolder(el){ el.classList.toggle("collapsed"); }
+
+// ─── FILE OPERATIONS ───────────────────────────────────────────
+function openFile(path){
+  document.querySelectorAll(".tree-item").forEach(function(el){el.classList.remove("active")});
+  var el = document.querySelector('[data-path="'+path+'"]');
+  if(el) el.classList.add("active");
+
+  currentFile = path;
+  updateBreadcrumb(path);
+  document.getElementById("btnDelete").style.display = "inline-flex";
+
+  fetch("/api/repo/"+REPO+"/fileget?path="+encodeURIComponent(path)).then(r=>r.json()).then(function(data){
+    if(data.error){ showError("File not found"); return; }
+    currentSha = data.sha;
+    // GitHub API returns base64 with \n — strip before decoding
+    var raw = data.content || "";
+    try {
+      currentContent = decodeURIComponent(escape(atob(raw.replace(/\s/g, ""))));
+    } catch(e){
+      try { currentContent = atob(raw.replace(/\s/g, "")); } catch(e2){ currentContent = raw; }
+    }
+    showView("viewer");
+    renderCode(currentContent, path);
+  }).catch(function(){ showError("Failed to load file"); });
+}
+
+function renderCode(content, path){
+  var el = document.getElementById("codeView");
+  var ext = path.split(".").pop().toLowerCase();
+  var name = path.split("/").pop();
+  var lines = content.split("\n");
+  var html = "";
+  lines.forEach(function(line,i){
+    var num = i+1;
+    var highlighted = highlightLine(line, ext, name);
+    var cls = "code-line";
+    if(/TODO|FIXME|HACK|XXX|BUG/.test(line)) cls += " highlight";
+    html += '<div class="'+cls+'"><span class="code-num">'+num+'</span><span class="code-text">'+highlighted+'</span></div>';
+  });
+  el.innerHTML = html;
+}
+
+// ─── SYNTAX HIGHLIGHTER ────────────────────────────────────────
+var HL = {
+  kwPy: /\b(and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield|True|False|None|self)\b/g,
+  kwJs: /\b(async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|export|extends|finally|for|from|function|if|import|in|instanceof|let|new|of|return|static|super|switch|this|throw|try|typeof|var|void|while|with|yield|true|false|null|undefined|NaN|Infinity)\b/g,
+  kwC:  /\b(auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|inline|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|bool|true|false|nullptr|class|public|private|protected|virtual|override|template|typename|namespace|using|new|delete|this|throw|try|catch|include|define|pragma|ifdef|ifndef|endif)\b/g,
+  kwGo: /\b(break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go|goto|if|import|interface|map|package|range|return|select|struct|switch|type|var|true|false|nil|iota|append|cap|close|copy|delete|len|make|new|panic|print|println|recover)\b/g,
+  kwRs: /\b(as|async|await|break|const|continue|crate|dyn|else|enum|extern|false|fn|for|if|impl|in|let|loop|match|mod|move|mut|pub|ref|return|self|Self|static|struct|super|trait|true|type|unsafe|use|where|while|Box|Option|Result|Some|None|Ok|Err|Vec|String|println|eprintln|format|write|writeln)\b/g,
+  kwRb: /\b(alias|and|begin|break|case|class|def|defined|do|else|elsif|end|ensure|false|for|if|in|module|next|nil|not|or|redo|rescue|retry|return|self|super|then|true|undef|unless|until|when|while|yield|require|include|puts|print)\b/g,
+  kwJava: /\b(abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|super|switch|synchronized|this|throw|throws|try|void|volatile|while|true|false|null|String|System)\b/g,
+  kwSh: /\b(if|then|else|elif|fi|for|while|do|done|case|esac|in|function|return|local|export|source|echo|exit|read|set|unset|shift|cd|pwd|test|true|false)\b/g,
+  kwSql: /\b(SELECT|FROM|WHERE|INSERT|INTO|VALUES|UPDATE|SET|DELETE|CREATE|TABLE|DROP|ALTER|INDEX|JOIN|INNER|LEFT|RIGHT|OUTER|ON|AND|OR|NOT|NULL|IS|IN|BETWEEN|LIKE|ORDER|BY|GROUP|HAVING|LIMIT|OFFSET|AS|DISTINCT|COUNT|SUM|AVG|MAX|MIN|UNION|CASE|WHEN|THEN|ELSE|END|PRIMARY|KEY|INT|VARCHAR|TEXT|BOOLEAN|DATE)\b/gi,
+  kwCss: /\b(important|inherit|initial|unset|none|auto|block|inline|flex|grid|absolute|relative|fixed|sticky|hidden|visible|scroll|solid|normal|bold|italic|center|left|right|top|bottom|transparent)\b/g,
+  kwHtml: /\b(div|span|a|p|h[1-6]|ul|ol|li|table|tr|td|th|form|input|button|select|option|textarea|img|script|style|link|meta|head|body|html|section|article|nav|header|footer|main)\b/g,
+  kwDocker: /^(FROM|RUN|CMD|LABEL|EXPOSE|ENV|ADD|COPY|ENTRYPOINT|VOLUME|USER|WORKDIR|ARG|ONBUILD|HEALTHCHECK|SHELL)\b/gm,
+  kwYaml: /\b(true|false|null|yes|no|on|off)\b/g,
+};
+
+function highlightLine(raw, ext, name){
+  var escaped = raw.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  var lang = extToLang(ext, name);
+
+  // Tokenize: walk char by char to separate strings, comments, code
+  var tokens = [];
+  var i = 0, buf = "", inStr = false, strCh = "";
+
+  while(i < escaped.length){
+    var ch = escaped[i];
+    var ch2 = escaped.substr(i,2);
+
+    if(inStr){
+      buf += ch;
+      if(ch === strCh && escaped[i-1] !== "\\"){
+        tokens.push({t:"str",v:buf}); buf=""; inStr=false;
+      }
+      i++; continue;
+    }
+
+    // Line comments
+    if((ch==="#" && "py sh yaml toml cfg rb dockerfile".indexOf(lang)>=0) || ch2==="//" && "js c go rs java css".indexOf(lang)>=0){
+      if(buf){tokens.push({t:"c",v:buf}); buf="";}
+      tokens.push({t:"cmt",v:escaped.substr(i)});
+      i=escaped.length; continue;
+    }
+    // Block comment
+    if(ch2==="/*"){
+      if(buf){tokens.push({t:"c",v:buf}); buf="";}
+      var end=escaped.indexOf("*/",i+2);
+      if(end===-1) end=escaped.length-2;
+      tokens.push({t:"cmt",v:escaped.substr(i,end-i+2)});
+      i=end+2; continue;
+    }
+
+    // String start
+    if(ch==='"'||ch==="'"||ch==="`"){
+      if(buf){tokens.push({t:"c",v:buf}); buf="";}
+      buf=ch; inStr=true; strCh=ch; i++; continue;
+    }
+
+    buf+=ch; i++;
+  }
+  if(buf) tokens.push(inStr?{t:"str",v:buf}:{t:"c",v:buf});
+
+  // Color tokens
+  var out="";
+  tokens.forEach(function(tk){
+    if(tk.t==="cmt") out+='<span class="cmt">'+tk.v+'</span>';
+    else if(tk.t==="str") out+='<span class="str">'+tk.v+'</span>';
+    else {
+      var s=tk.v;
+
+      if(lang==="html"||lang==="xml"){
+        // HTML: color tags only (skip keyword/attribute regex to prevent span corruption)
+        s=s.replace(/(&lt;\/?)([\w-]+)/g, '$1<span class="tag">$2</span>');
+        s=s.replace(/\b(0x[\da-fA-F]+|\d+\.?\d*)\b/g,'<span class="num">$1</span>');
+      } else {
+        // All other languages: keywords, functions, decorators, numbers, then lang-specific
+        var kw=getKeywords(lang);
+        if(kw){kw.lastIndex=0; s=s.replace(kw,'<span class="kw">$1</span>');}
+        s=s.replace(/\b([a-zA-Z_]\w*)\s*\(/g,'<span class="fn">$1</span>(');
+        if(lang==="py"||lang==="java") s=s.replace(/(@\w+)/g,'<span class="dec">$1</span>');
+        s=s.replace(/\b(0x[\da-fA-F]+|\d+\.?\d*(?:e[+-]?\d+)?)\b/g,'<span class="num">$1</span>');
+        if(lang==="css") s=s.replace(/([\w-]+)\s*:/g,'<span class="prop">$1</span>:');
+        if(lang==="yaml"||lang==="toml") s=s.replace(/^(\s*[\w.-]+)\s*:/,'<span class="prop">$1</span>:');
+      }
+      out+=s;
+    }
+  });
+  return out;
+}
+
+function extToLang(ext, name){
+  if(name==="Dockerfile") return "dockerfile";
+  if(name==="Makefile") return "sh";
+  if(name==="Gemfile") return "rb";
+  var m={py:"py",pyw:"py",js:"js",jsx:"js",ts:"js",tsx:"js",mjs:"js",
+    c:"c",cpp:"c",cc:"c",h:"c",hpp:"c",ino:"c",
+    go:"go",rs:"rs",rb:"rb",java:"java",kt:"java",
+    sh:"sh",bash:"sh",zsh:"sh",bat:"sh",
+    sql:"sql",html:"html",htm:"html",xml:"html",svg:"html",
+    css:"css",scss:"css",less:"css",
+    json:"json",yml:"yaml",yaml:"yaml",toml:"toml",ini:"cfg",cfg:"cfg",
+    md:"md",txt:"txt",r:"py",php:"py",dockerfile:"dockerfile"};
+  return m[ext]||"generic";
+}
+
+function getKeywords(lang){
+  var m={py:HL.kwPy,js:HL.kwJs,c:HL.kwC,go:HL.kwGo,rs:HL.kwRs,rb:HL.kwRb,
+    java:HL.kwJava,sh:HL.kwSh,sql:HL.kwSql,css:HL.kwCss,html:HL.kwHtml,
+    yaml:HL.kwYaml,toml:HL.kwYaml,dockerfile:HL.kwDocker};
+  return m[lang]||HL.kwPy;
+}
+
+function showView(view){
+  var panels = ["codeView","editorPanel","mdPreview","searchPanel","todoPanel","secretPanel","geniusPanel","injectPanel","emptyState","splitPreview"];
+  panels.forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display="none"; });
+  ["btnView","btnEdit","btnPreview"].forEach(function(id){ document.getElementById(id).classList.remove("active"); });
+
+  if(view==="viewer" && currentFile){
+    document.getElementById("codeView").style.display="block";
+    document.getElementById("btnView").classList.add("active");
+  } else if(view==="edit" && currentFile){
+    document.getElementById("editorPanel").style.display="flex";
+    document.getElementById("btnEdit").classList.add("active");
+    document.getElementById("editorArea").value = currentContent;
+    document.getElementById("commitMsg").value = "Update "+currentFile;
+    // If markdown, show live split preview
+    if(currentFile.endsWith(".md")){
+      setupLivePreview();
+    }
+  } else if(view==="preview" && currentFile){
+    document.getElementById("btnPreview").classList.add("active");
+    if(currentFile.endsWith(".md")){
+      // Split view: code left, rendered right
+      document.getElementById("splitPreview").style.display="flex";
+      document.getElementById("splitLeft").innerHTML = '<div class="code-view">' + document.getElementById("codeView").innerHTML + '</div>';
+      document.getElementById("splitRight").innerHTML = renderMarkdown(currentContent);
+    } else {
+      // For non-md files, show formatted info view
+      document.getElementById("mdPreview").style.display="block";
+      var ext = currentFile.split(".").pop().toLowerCase();
+      var lines = currentContent.split("\n");
+      var html = '<h1>' + fileIcon(currentFile) + ' ' + currentFile + '</h1>';
+      html += '<p><strong>Type:</strong> ' + ext.toUpperCase() + ' &nbsp; <strong>Lines:</strong> ' + lines.length + ' &nbsp; <strong>Size:</strong> ' + formatBytes(currentContent.length) + '</p>';
+      // Show stats
+      var todos = 0, blanks = 0, comments = 0;
+      lines.forEach(function(l){
+        if(/TODO|FIXME|HACK|XXX/.test(l)) todos++;
+        if(l.trim()==="") blanks++;
+        if(/^\s*(#|\/\/|\/\*|\*)/.test(l)) comments++;
+      });
+      html += '<p><strong>Blank lines:</strong> ' + blanks + ' &nbsp; <strong>Comment lines:</strong> ' + comments + ' &nbsp; <strong>TODOs:</strong> ' + todos + '</p>';
+      html += '<hr style="border-color:var(--border);margin:12px 0">';
+      // Show imports/dependencies
+      var imports = lines.filter(function(l){return /^(import |from |#include |require|use )/.test(l.trim())});
+      if(imports.length){
+        html += '<h2>Dependencies</h2><pre><code>';
+        imports.forEach(function(l){html += l.trim().replace(/</g,"&lt;") + "\n"});
+        html += '</code></pre>';
+      }
+      // Show functions/classes
+      var defs = [];
+      lines.forEach(function(l,i){
+        if(/^\s*(def |class |function |const \w+ = |export |void |int |float |char |pub fn )/.test(l)){
+          defs.push({line:i+1, text:l.trim()});
+        }
+      });
+      if(defs.length){
+        html += '<h2>Symbols (' + defs.length + ')</h2>';
+        html += '<table><tr><th>Line</th><th>Definition</th></tr>';
+        defs.forEach(function(d){
+          html += '<tr><td style="color:var(--text-dim);font-family:monospace">' + d.line + '</td><td><code>' + d.text.replace(/</g,"&lt;").substring(0,80) + '</code></td></tr>';
+        });
+        html += '</table>';
+      }
+      document.getElementById("mdPreview").innerHTML = html;
+    }
+  } else if(view==="search"){
+    document.getElementById("searchPanel").style.display="block";
+    document.getElementById("searchInput").focus();
+  } else if(view==="todos"){
+    document.getElementById("todoPanel").style.display="block";
+    loadTodos();
+  } else if(view==="secrets"){
+    document.getElementById("secretPanel").style.display="block";
+    loadSecrets();
+  } else if(view==="genius"){
+    document.getElementById("geniusPanel").style.display="block";
+  } else if(view==="inject"){
+    document.getElementById("injectPanel").style.display="block";
+  } else {
+    document.getElementById("emptyState").style.display="flex";
+  }
+}
+
+function setupLivePreview(){
+  // When editing .md, add a floating preview toggle
+  var area = document.getElementById("editorArea");
+  var existing = document.getElementById("livePreviewPane");
+  if(existing) existing.remove();
+  var pane = document.createElement("div");
+  pane.id = "livePreviewPane";
+  pane.className = "md-preview";
+  pane.style.cssText = "position:absolute;right:0;top:0;width:45%;height:calc(100% - 50px);overflow-y:auto;border-left:1px solid var(--border);background:var(--surface);display:none;z-index:5";
+  var panel = document.getElementById("editorPanel");
+  panel.style.position = "relative";
+  panel.appendChild(pane);
+  // Add toggle button
+  var btn = document.createElement("button");
+  btn.textContent = "👁 Live Preview";
+  btn.style.cssText = "position:absolute;top:4px;right:8px;z-index:10;padding:3px 8px;font-size:.65rem;border-radius:6px;background:rgba(0,0,0,.4);color:var(--text);border:1px solid var(--border)";
+  btn.onclick = function(){
+    if(pane.style.display==="none"){
+      pane.style.display="block";
+      area.style.width="55%";
+      pane.innerHTML = renderMarkdown(area.value);
+      btn.textContent = "✕ Close Preview";
+    } else {
+      pane.style.display="none";
+      area.style.width="100%";
+      btn.textContent = "👁 Live Preview";
+    }
+  };
+  panel.appendChild(btn);
+  area.addEventListener("input",function(){
+    if(pane.style.display!=="none"){
+      pane.innerHTML = renderMarkdown(area.value);
+    }
+  });
+}
+
+function formatBytes(b){
+  if(b<1024) return b+" B";
+  if(b<1048576) return (b/1024).toFixed(1)+" KB";
+  return (b/1048576).toFixed(1)+" MB";
+}
+
+// ─── SAVE ──────────────────────────────────────────────────────
+function saveFile(){
+  var content = document.getElementById("editorArea").value;
+  var msg = document.getElementById("commitMsg").value || "Update "+currentFile;
+  fetch("/api/repo/"+REPO+"/file/save",{
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({path:currentFile, content:content, message:msg, sha:currentSha})
+  }).then(r=>r.json()).then(function(d){
+    if(d.ok){ currentContent=content; showToast("✅ Committed: "+msg); showView("viewer"); renderCode(content,currentFile); }
+    else showToast("❌ Failed to save");
+  });
+}
+
+// ─── NEW FILE ──────────────────────────────────────────────────
+function newFile(){
+  var path = prompt("New file path (e.g. src/helper.py):");
+  if(!path) return;
+  currentFile = path;
+  currentSha = null;
+  currentContent = "";
+  updateBreadcrumb(path);
+  document.getElementById("btnDelete").style.display="inline-flex";
+  document.getElementById("editorArea").value = "";
+  document.getElementById("commitMsg").value = "Create "+path;
+  showView("edit");
+}
+
+// ─── UPLOAD ────────────────────────────────────────────────────
+function uploadFile(){
+  var input = document.createElement("input");
+  input.type = "file"; input.multiple = true;
+  input.onchange = function(){
+    Array.from(input.files).forEach(function(file){
+      var reader = new FileReader();
+      reader.onload = function(){
+        var b64 = reader.result.split(",")[1];
+        fetch("/api/repo/"+REPO+"/file/upload",{
+          method:"POST", headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({path:file.name, content_b64:b64, message:"Upload "+file.name})
+        }).then(r=>r.json()).then(function(d){
+          showToast(d.ok ? "✅ Uploaded "+file.name : "❌ Failed: "+file.name);
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+  input.click();
+}
+
+// ─── DELETE ────────────────────────────────────────────────────
+function deleteCurrentFile(){
+  if(!currentFile || !currentSha) return;
+  if(!confirm("Delete "+currentFile+"?")) return;
+  fetch("/api/repo/"+REPO+"/file/delete",{
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({path:currentFile, sha:currentSha, message:"Delete "+currentFile})
+  }).then(r=>r.json()).then(function(d){
+    if(d.ok){ showToast("🗑️ Deleted "+currentFile); currentFile=null; currentSha=null; showView("empty"); }
+    else showToast("❌ Failed");
+  });
+}
+
+// ─── SEARCH ────────────────────────────────────────────────────
+function runSearch(){
+  var q = document.getElementById("searchInput").value.trim();
+  if(!q) return;
+  document.getElementById("searchResults").innerHTML = '<p style="color:var(--text-dim)">Searching...</p>';
+  fetch("/api/repo/"+REPO+"/search?q="+encodeURIComponent(q)).then(r=>r.json()).then(function(d){
+    var results = d.results||[];
+    if(!results.length){ document.getElementById("searchResults").innerHTML='<p style="color:var(--text-dim)">No results found.</p>'; return; }
+    var html = '<p style="color:var(--text-dim);font-size:.72rem;margin-bottom:8px">'+results.length+' match(es)</p>';
+    results.forEach(function(r){
+      html += '<div class="result-item" onclick="openFile(\''+r.path.replace(/'/g,"\\'")+'\')">';
+      html += '<span class="path">'+r.path+'</span><span class="line-num">:'+r.line+'</span>';
+      html += '<span class="text">'+r.text.replace(/</g,"&lt;")+'</span></div>';
+    });
+    document.getElementById("searchResults").innerHTML = html;
+  });
+}
+
+// ─── TODOS ─────────────────────────────────────────────────────
+function loadTodos(){
+  document.getElementById("todoResults").innerHTML = '<p style="color:var(--text-dim)">Scanning all files...</p>';
+  fetch("/api/repo/"+REPO+"/todos").then(r=>r.json()).then(function(d){
+    var todos = d.todos||[];
+    if(!todos.length){ document.getElementById("todoResults").innerHTML='<p style="color:var(--accent)">✨ No TODOs found — clean codebase!</p>'; return; }
+    var html = '<p style="color:var(--text-dim);font-size:.72rem;margin-bottom:8px">'+todos.length+' item(s) found</p>';
+    todos.forEach(function(t){
+      var kwClass = t.keyword==="TODO"?"kw-todo":t.keyword==="FIXME"?"kw-fixme":"kw-hack";
+      html += '<div class="result-item" onclick="openFile(\''+t.path.replace(/'/g,"\\'")+'\')">';
+      html += '<span class="result-kw '+kwClass+'">'+t.keyword+'</span>';
+      html += '<span class="path">'+t.path+'</span><span class="line-num">:'+t.line+'</span>';
+      html += '<span class="text">'+t.text.replace(/</g,"&lt;")+'</span></div>';
+    });
+    document.getElementById("todoResults").innerHTML = html;
+  });
+}
+
+// ─── SECRETS ───────────────────────────────────────────────────
+function loadSecrets(){
+  document.getElementById("secretResults").innerHTML = '<p style="color:var(--text-dim)">Deep scanning...</p>';
+  fetch("/api/repo/"+REPO+"/secrets").then(r=>r.json()).then(function(d){
+    var secrets = d.secrets||[];
+    if(!secrets.length){ document.getElementById("secretResults").innerHTML='<p style="color:var(--accent)">✅ No secrets detected — repo looks clean!</p>'; return; }
+    var html = '<p style="color:#f85149;font-size:.72rem;margin-bottom:8px">⚠️ '+secrets.length+' potential secret(s) found!</p>';
+    secrets.forEach(function(s){
+      html += '<div class="result-item" onclick="openFile(\''+s.path.replace(/'/g,"\\'")+'\')">';
+      html += '<span class="result-kw kw-secret">'+s.type+'</span>';
+      html += '<span class="path">'+s.path+'</span><span class="line-num">:'+s.line+'</span>';
+      html += '<span class="text">'+s.preview.replace(/</g,"&lt;")+'</span></div>';
+    });
+    document.getElementById("secretResults").innerHTML = html;
+  });
+}
+
+// ─── README GENERATOR ──────────────────────────────────────────
+function generateReadme(){
+  showToast("📝 Generating README...");
+  fetch("/api/repo/"+REPO+"/generate-readme",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"}).then(r=>r.json()).then(function(d){
+    if(d.readme){
+      currentFile = "README.md";
+      currentContent = d.readme;
+      currentSha = null;
+      updateBreadcrumb("README.md");
+      document.getElementById("editorArea").value = d.readme;
+      document.getElementById("commitMsg").value = "Add auto-generated README";
+      document.getElementById("btnDelete").style.display="inline-flex";
+      showView("edit");
+      showToast("📝 README generated — review and save!");
+    }
+  });
+}
+
+// ─── TEMPLATE INJECTOR ─────────────────────────────────────────
+function injectTemplate(name){
+  if(!confirm("Inject template? This will commit directly.")) return;
+  fetch("/api/repo/"+REPO+"/inject-template",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({template:name})}).then(r=>r.json()).then(function(d){
+    showToast(d.ok ? "✅ Added "+d.filename : "❌ Failed");
+  });
+}
+
+// ─── IMAGE GALLERY ─────────────────────────────────────────────
+function showImageGallery(){
+  var images = allFiles.filter(function(f){return /\.(png|jpg|jpeg|gif|svg|webp|ico)$/i.test(f.path)});
+  if(!images.length){ showToast("No images found in repo"); return; }
+  var html = '<h3 style="margin-bottom:12px">🖼️ Image Gallery ('+images.length+' images)</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px">';
+  images.forEach(function(img){
+    var url = "https://raw.githubusercontent/"+REPO+"/HEAD/"+img.path;
+    html += '<div style="text-align:center;padding:8px;border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="openFile(\''+img.path+'\')">';
+    html += '<div style="font-size:2rem;margin-bottom:4px">🖼️</div>';
+    html += '<div style="font-size:.65rem;word-break:break-all;color:var(--text-dim)">'+img.path.split("/").pop()+'</div>';
+    html += '<div style="font-size:.55rem;color:var(--text-dim);opacity:.5">'+(img.size>1024?(img.size/1024).toFixed(1)+"K":img.size+"B")+'</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  document.getElementById("geniusPanel").innerHTML = html;
+  showView("genius");
+}
+
+// ─── BREADCRUMB ────────────────────────────────────────────────
+function updateBreadcrumb(path){
+  var parts = path.split("/");
+  var html = '<a onclick="goToFolder(\'\')">'+REPO+'</a>';
+  var sofar = "";
+  parts.forEach(function(p,i){
+    sofar += (sofar?"/":"")+p;
+    html += ' / ';
+    if(i < parts.length-1) html += '<a onclick="goToFolder(\''+sofar+'\')">'+p+'</a>';
+    else html += '<strong style="color:var(--text)">'+p+'</strong>';
+  });
+  document.getElementById("breadcrumb").innerHTML = html;
+}
+
+function goToFolder(path){
+  // Filter tree to show only this folder
+  if(!path){ renderTree(allFiles); return; }
+  var filtered = allFiles.filter(function(f){return f.path.startsWith(path+"/")});
+  renderTree(filtered);
+}
+
+// ─── MARKDOWN RENDERER (basic) ─────────────────────────────────
+function renderMarkdown(md){
+  // Escape HTML first
+  var html = md.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Code blocks (must come before other transformations)
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, function(m,lang,code){
+    return '<pre><code class="lang-'+lang+'">'+code+'</code></pre>';
+  });
+  // Inline code
+  html = html.replace(/`([^`\n]+)`/g,'<code>$1</code>');
+  // Headers
+  html = html.replace(/^### (.+)/gm,'<h3>$1</h3>');
+  html = html.replace(/^## (.+)/gm,'<h2>$1</h2>');
+  html = html.replace(/^# (.+)/gm,'<h1>$1</h1>');
+  // Blockquotes
+  html = html.replace(/^&gt; (.+)/gm,'<blockquote>$1</blockquote>');
+  // Bold and italic
+  html = html.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  // Images (before links)
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,'<img src="$2" alt="$1">');
+  // Links
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank">$1</a>');
+  // Horizontal rule
+  html = html.replace(/^---+$/gm,'<hr style="border-color:var(--border);margin:12px 0">');
+  // Table support
+  html = html.replace(/^\|(.+)\|\s*\n\|[\s\-:|]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm, function(m,header,body){
+    var ths = header.split('|').map(function(c){return '<th>'+c.trim()+'</th>'}).join('');
+    var rows = body.trim().split('\n').map(function(row){
+      var tds = row.replace(/^\||\|$/g,'').split('|').map(function(c){return '<td>'+c.trim()+'</td>'}).join('');
+      return '<tr>'+tds+'</tr>';
+    }).join('');
+    return '<table><thead><tr>'+ths+'</tr></thead><tbody>'+rows+'</tbody></table>';
+  });
+  // Unordered lists
+  html = html.replace(/^[\-\*] (.+)/gm,'<li>$1</li>');
+  // Wrap consecutive <li> in <ul>
+  html = html.replace(/((?:<li>.*<\/li>\n?)+)/g,'<ul>$1</ul>');
+  // Paragraphs (double newline)
+  html = html.replace(/\n\n+/g,'</p><p>');
+  // Single newlines inside paragraphs
+  html = html.replace(/([^>])\n([^<])/g,'$1<br>$2');
+  html = '<p>'+html+'</p>';
+  // Clean up: don't wrap block elements in <p>
+  html = html.replace(/<p>\s*<(h[123]|ul|ol|pre|blockquote|table|hr|img)/g,'<$1');
+  html = html.replace(/<\/(h[123]|ul|ol|pre|blockquote|table)>\s*<\/p>/g,'</$1>');
+  html = html.replace(/<p>\s*<\/p>/g,'');
+  return html;
+}
+
+// ─── TOAST ─────────────────────────────────────────────────────
+function showToast(msg){
+  var el = document.createElement("div");
+  el.style.cssText = "position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,var(--accent),var(--band2));color:var(--bg);padding:10px 18px;border-radius:50px;font-weight:700;font-size:.82rem;z-index:9999;box-shadow:0 4px 16px var(--glow);animation:slideIn .3s ease";
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(function(){el.remove()},3000);
+}
+
+function showError(msg){ showToast("❌ "+msg); }
+</script>
+
+{{include footer.html}}

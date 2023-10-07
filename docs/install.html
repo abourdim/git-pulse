@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — Installation</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="readme.html">README</a>
+    <a href="install.html" class="active">Install</a>
+    <a href="howto.html">How-To</a>
+    <a href="faq.html">FAQ</a>
+    <a href="commands.html">Commands</a>
+    <a href="webui.html">Web UI</a>
+    <a href="themes.html">Themes</a>
+    <a href="config.html">Config</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Installation</h1>
+
+<h2>Requirements</h2>
+<ul>
+  <li><strong>Python 3.8+</strong> (tested 3.8–3.12)</li>
+  <li><strong>requests</strong> library (auto-installed by installer)</li>
+  <li><strong>GitHub token</strong> (or use demo mode)</li>
+  <li>Optional: <code>openai</code> (for AI summaries only)</li>
+</ul>
+
+<h2>Option A: One-Step Installer (recommended)</h2>
+<pre><code>bash gitpulse.sh      # Select option 2 (Install)</code></pre>
+<p>The installer does everything in one step:</p>
+<div class="steps">
+  <div class="step">Updates package index (Linux)</div>
+  <div class="step">Installs Python 3.8+ if missing</div>
+  <div class="step">Installs pip if missing</div>
+  <div class="step">Installs git if missing</div>
+  <div class="step">Installs <code>requests</code> via pip</div>
+  <div class="step">Copies all files to <code>~/.gitpulse/</code> (including the launcher itself)</div>
+  <div class="step">Auto-creates <code>gp</code> alias in <code>~/.bashrc</code> or <code>~/.zshrc</code></div>
+</div>
+<p>After install: delete the zip extraction folder — the <code>gp</code> alias points to <code>~/.gitpulse/gitpulse.sh</code> and works from anywhere.</p>
+
+<h2>Option B: Manual Install</h2>
+<pre><code># 1. Unzip or clone gitpulse/
+# 2. Install the dependency
+pip install requests
+
+# 3. Run
+python gitpulse.py</code></pre>
+
+<h2>Option C: Portable USB (zero install)</h2>
+<div class="steps">
+  <div class="step">Copy the entire <code>gitpulse/</code> folder to a USB stick</div>
+  <div class="step">(Optional) Put WinPython in <code>portable/python/</code> for zero-install Windows</div>
+  <div class="step">Windows: double-click <code>portable\run.bat</code><br>
+  Linux: <code>chmod +x portable/run.sh && ./portable/run.sh</code></div>
+</div>
+<p>Config is stored on the USB in <code>portable/config/</code> — nothing touches the host machine.</p>
+
+<h2>Getting a GitHub Token</h2>
+<div class="steps">
+  <div class="step">Go to <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a></div>
+  <div class="step">Click <strong>"Generate new token (classic)"</strong></div>
+  <div class="step">Name it <code>GitPulse</code></div>
+  <div class="step">Select scopes:
+    <table>
+      <tr><th>Scope</th><th>Required?</th><th>For</th></tr>
+      <tr><td><code>repo</code></td><td>✅ Yes</td><td>All repo operations</td></tr>
+      <tr><td><code>read:user</code></td><td>✅ Yes</td><td>User profile info</td></tr>
+      <tr><td><code>delete_repo</code></td><td>Optional</td><td>Delete features</td></tr>
+      <tr><td><code>workflow</code></td><td>Optional</td><td>Actions monitor</td></tr>
+    </table>
+  </div>
+  <div class="step">Click <strong>Generate token</strong>, copy the <code>ghp_...</code> string</div>
+  <div class="step">Paste when GitPulse asks, or set as env var:
+    <pre><code>export GITHUB_TOKEN="ghp_your_token_here"</code></pre>
+  </div>
+</div>
+
+<h3>Where is my token stored?</h3>
+<ul>
+  <li>File: <code>~/.gitpulse/config.json</code></li>
+  <li>Permissions: <code>chmod 600</code> (owner-only)</li>
+  <li>Never sent anywhere except <code>api.github.com</code></li>
+  <li>Never logged, shared, or cached</li>
+</ul>
+
+<h2>MSYS2 Specific</h2>
+<pre><code># Update first
+pacman -Syu
+
+# Install Python
+pacman -S python python-pip
+
+# Run installer
+bash gitpulse.sh</code></pre>
+
+<h2>Verify Installation</h2>
+<pre><code># Check Python
+python --version       # Should be 3.8+
+
+# Check requests
+python -c "import requests; print(requests.__version__)"
+
+# Run GitPulse
+python gitpulse.py --demo    # Should show 17 demo repos</code></pre>
+
+<div class="doc-footer">
+  <a href="index.html">← Back to Docs</a> · <a href="howto.html">How-To Guides →</a>
+</div>
+</div>
+</body>
+</html>

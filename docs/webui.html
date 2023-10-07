@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — Web UI</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Home</a><a href="readme.html">README</a><a href="install.html">Install</a>
+    <a href="howto.html">How-To</a><a href="faq.html">FAQ</a><a href="commands.html">Commands</a>
+    <a href="webui.html" class="active">Web UI</a><a href="themes.html">Themes</a><a href="config.html">Config</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Web UI</h1>
+<h2>Starting</h2>
+<pre><code>python gitpulse.py --web             # Normal
+python gitpulse.py --web --demo      # Demo (no token)</code></pre>
+<p>Server: <code>http://127.0.0.1:5000</code>. Browser opens automatically. No token? Welcome page appears with Connect / Demo / Tutorial buttons.</p>
+
+<h2>Architecture</h2>
+<ul>
+  <li><strong>Server</strong>: <code>web/server.py</code> — Python http.server, zero deps</li>
+  <li><strong>Router</strong>: <code>web/router.py</code> — URL dispatch with &lt;param&gt;</li>
+  <li><strong>Templates</strong>: <code>web/templating.py</code> — {{var}}, {{for}}, {{if}}, {{include}}</li>
+  <li><strong>Routes</strong>: <code>web/routes/__init__.py</code> — page + API handlers</li>
+</ul>
+
+<h2>All 23 Pages</h2>
+<table>
+<tr><th>Page</th><th>URL</th><th>Description</th></tr>
+<tr><td>Welcome</td><td><code>/welcome</code></td><td>Connect token, start demo, read tutorial</td></tr>
+<tr><td>Dashboard</td><td><code>/</code></td><td>Stats overview, quick access buttons</td></tr>
+<tr><td>Repos</td><td><code>/repos</code></td><td>Browse all repos — sortable columns, search, create</td></tr>
+<tr><td>Repo Detail</td><td><code>/repo/{name}</code></td><td>Languages, commits, branches</td></tr>
+<tr><td><strong>File Workspace</strong></td><td><code>/repo/{name}/files</code></td><td>IDE: browse, view, edit, upload, delete files — syntax highlighting, genius tools</td></tr>
+<tr><td>Health</td><td><code>/health</code></td><td>Score repos on best practices</td></tr>
+<tr><td>Backup</td><td><code>/backup</code></td><td>Backup manager</td></tr>
+<tr><td>Danger Zone</td><td><code>/danger</code></td><td>Secret scanner + risk indicators</td></tr>
+<tr><td>Archaeology</td><td><code>/archaeology</code></td><td>Dead branches, large files, TODOs</td></tr>
+<tr><td>Grouper</td><td><code>/grouper</code></td><td>Auto-categorize repos (10 types)</td></tr>
+<tr><td>Rhythm</td><td><code>/rhythm</code></td><td>Coding pattern analysis</td></tr>
+<tr><td>Analytics</td><td><code>/analytics</code></td><td>Traffic views/clones/referrers</td></tr>
+<tr><td>Time Machine</td><td><code>/timemachine/{name}</code></td><td>Commit slider + file tree</td></tr>
+<tr><td>DNA</td><td><code>/dna</code></td><td>SVG fingerprint per repo</td></tr>
+<tr><td>Graph</td><td><code>/graph</code></td><td>Force-directed repo map</td></tr>
+<tr><td>Radar</td><td><code>/radar</code></td><td>Live event feed (30s refresh)</td></tr>
+<tr><td>Voice</td><td><code>/voice</code></td><td>Speech commands (Chrome/Edge)</td></tr>
+<tr><td>Ambient</td><td><code>/ambient</code></td><td>Fullscreen always-on dashboard</td></tr>
+<tr><td>Tutorial</td><td><code>/tutorial</code></td><td>Full feature guide</td></tr>
+<tr><td>Settings</td><td><code>/settings</code></td><td>Theme, language, mode — persists via localStorage</td></tr>
+<tr><td>404</td><td><em>invalid</em></td><td>Not found</td></tr>
+</table>
+
+<h2>File Workspace (v2.0+)</h2>
+<p>Full IDE-like file browser at <code>/repo/{name}/files</code>:</p>
+<ul>
+  <li><strong>Tree panel</strong> — expandable folder tree with file sizes, filter search</li>
+  <li><strong>Code viewer</strong> — syntax highlighting for 15+ languages (Python, JS, C/C++, Go, Rust, Ruby, Java, Shell, SQL, HTML, CSS, YAML, Dockerfile…)</li>
+  <li><strong>Editor</strong> — edit any file in-browser, commit directly to GitHub</li>
+  <li><strong>Preview</strong> — Markdown rendered live, split view (code + rendered)</li>
+  <li><strong>Genius tools</strong> — README generator, template injector, TODO tracker, secret scanner, code search, image gallery</li>
+  <li><strong>Upload / New / Delete</strong> — full file management</li>
+</ul>
+
+<h2>API Endpoints (JSON)</h2>
+<table>
+<tr><th>Method</th><th>URL</th><th>Returns</th></tr>
+<tr><td>GET</td><td><code>/api/repos</code></td><td>All repos</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{name}</code></td><td>Repo + languages</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{name}/commits</code></td><td>Recent commits</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{name}/tree</code></td><td>File tree</td></tr>
+<tr><td>GET</td><td><code>/api/health</code></td><td>Health scores</td></tr>
+<tr><td>GET</td><td><code>/api/danger/{name}</code></td><td>Secrets + risks</td></tr>
+<tr><td>GET</td><td><code>/api/archaeology/{name}</code></td><td>Dead branches, TODOs</td></tr>
+<tr><td>GET</td><td><code>/api/grouper</code></td><td>Categorized repos</td></tr>
+<tr><td>GET</td><td><code>/api/rhythm</code></td><td>Commit patterns</td></tr>
+<tr><td>GET</td><td><code>/api/dna/{name}</code></td><td>Repo data for SVG</td></tr>
+<tr><td>GET</td><td><code>/api/graph</code></td><td>Repos + languages</td></tr>
+<tr><td>GET</td><td><code>/api/radar</code></td><td>GitHub events</td></tr>
+<tr><td>GET</td><td><code>/api/analytics/{name}</code></td><td>Views/clones/referrers</td></tr>
+<tr><td>POST</td><td><code>/api/connect</code></td><td>Accept token or demo</td></tr>
+<tr><td>POST</td><td><code>/api/settings</code></td><td>Update config</td></tr>
+<tr><td>POST</td><td><code>/api/repo/create</code></td><td>Create repo</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{name}/fileget?path=…</code></td><td>File content (base64) + SHA</td></tr>
+<tr><td>POST</td><td><code>/api/repo/{name}/file/save</code></td><td>Create/update file (commit)</td></tr>
+<tr><td>POST</td><td><code>/api/repo/{name}/file/delete</code></td><td>Delete file (commit)</td></tr>
+<tr><td>POST</td><td><code>/api/repo/{name}/file/upload</code></td><td>Upload file (base64)</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{name}/search?q=…</code></td><td>Code search</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{name}/todos</code></td><td>TODO/FIXME/HACK comments</td></tr>
+<tr><td>GET</td><td><code>/api/repo/{name}/secrets</code></td><td>Leaked secrets scan</td></tr>
+<tr><td>POST</td><td><code>/api/repo/{name}/generate-readme</code></td><td>Auto-generate README</td></tr>
+<tr><td>POST</td><td><code>/api/repo/{name}/inject-template</code></td><td>Inject .gitignore/LICENSE/CONTRIBUTING</td></tr>
+<tr><td>GET</td><td><code>/static/i18n/{lang}.json</code></td><td>Translation strings (en/fr/ar)</td></tr>
+</table>
+
+<h2>Internationalization (i18n)</h2>
+<p>Client-side translation system introduced in v6.0:</p>
+<ul>
+  <li><strong>3 languages</strong>: English, Français, العربية (with full RTL support)</li>
+  <li><strong>89 translation keys</strong> across 8 templates (74 tagged elements)</li>
+  <li><strong>JSON files</strong>: <code>/static/i18n/en.json</code>, <code>fr.json</code>, <code>ar.json</code></li>
+  <li><strong>Loader</strong>: <code>/static/js/i18n.js</code> — reads <code>gp_language</code> from localStorage, applies on page load</li>
+  <li><strong>Live switch</strong>: Settings → Language instantly reloads translations (no page refresh)</li>
+  <li><strong>Tagging</strong>: <code>data-i18n="key"</code> for text, <code>data-i18n-attr="placeholder"</code> for input placeholders</li>
+  <li><strong>JS helper</strong>: <code>t("key")</code> for dynamic content (toasts, generated HTML)</li>
+</ul>
+
+<h2>Syntax Highlighting (v4.0+)</h2>
+<p>The File Workspace code viewer uses a custom tokenizer-based highlighter:</p>
+<ul>
+  <li><strong>15+ languages</strong> with per-language keyword sets</li>
+  <li><strong>Tokenizer</strong> — char-by-char state machine separates strings, comments, and code before coloring (prevents cross-contamination)</li>
+  <li><strong>Colors</strong>: keywords (purple), strings (green), comments (dim italic), functions (blue), numbers (orange), decorators (pink), HTML tags (red), CSS properties (cyan)</li>
+  <li><strong>HTML-safe</strong> — special path for HTML/XML files avoids tag/attribute corruption</li>
+</ul>
+
+<div class="doc-footer">
+  <a href="index.html">← Back to Docs</a> · <a href="themes.html">Themes →</a>
+</div>
+</div>
+</body>
+</html>

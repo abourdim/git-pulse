@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GitPulse — Ambient Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a; color: #e0e0e0; font-family: 'SF Mono', 'Fira Code', monospace;
+    overflow: hidden; height: 100vh; width: 100vw;
+  }
+  .ambient-header {
+    text-align: center; padding: 30px 0 15px;
+    font-size: 14px; opacity: 0.4;
+  }
+  .bismillah { font-size: 18px; font-family: 'Amiri', serif; margin-bottom: 8px; }
+  .clock { font-size: 64px; text-align: center; font-weight: 200; letter-spacing: 4px; }
+  .date { text-align: center; font-size: 18px; opacity: 0.5; margin-top: 5px; }
+  .stats-row {
+    display: flex; justify-content: center; gap: 60px; margin-top: 40px;
+  }
+  .stat { text-align: center; }
+  .stat-value { font-size: 42px; font-weight: 200; color: #3498db; }
+  .stat-label { font-size: 12px; text-transform: uppercase; opacity: 0.4; margin-top: 4px; }
+  .feed {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 200px; overflow: hidden; padding: 20px 40px;
+  }
+  .feed-item {
+    padding: 6px 0; font-size: 13px; opacity: 0.6;
+    animation: fadeIn 0.5s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
+  .pulse {
+    width: 8px; height: 8px; border-radius: 50%; background: #2ecc71;
+    display: inline-block; animation: pulse 2s infinite;
+    margin-right: 8px;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="ambient-header">
+  <div class="bismillah">بسم الله الرحمن الرحيم</div>
+  GitPulse Ambient · {{username}}
+</div>
+<div class="clock" id="clock"></div>
+<div class="date" id="date"></div>
+<div class="stats-row">
+  <div class="stat"><div class="stat-value" id="s-repos">—</div><div class="stat-label">Repos</div></div>
+  <div class="stat"><div class="stat-value" id="s-stars">—</div><div class="stat-label">Stars</div></div>
+  <div class="stat"><div class="stat-value" id="s-public">—</div><div class="stat-label">Public</div></div>
+  <div class="stat"><div class="stat-value" id="s-private">—</div><div class="stat-label">Private</div></div>
+</div>
+<div class="feed" id="feed"></div>
+<script>
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  document.getElementById('date').textContent = now.toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  // Auto-dim at night
+  const h = now.getHours();
+  document.body.style.opacity = (h >= 23 || h < 6) ? '0.4' : '1';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+async function loadStats() {
+  const r = await fetch('/api/repos');
+  const d = await r.json();
+  const repos = d.repos || [];
+  document.getElementById('s-repos').textContent = repos.length;
+  document.getElementById('s-stars').textContent = repos.reduce((a, r) => a + (r.stars||0), 0);
+  document.getElementById('s-public').textContent = repos.filter(r => !r.private).length;
+  document.getElementById('s-private').textContent = repos.filter(r => r.private).length;
+}
+
+async function loadFeed() {
+  const r = await fetch('/api/radar');
+  const d = await r.json();
+  const icons = {PushEvent:'📤',PullRequestEvent:'🔀',IssuesEvent:'🐛',WatchEvent:'⭐',ForkEvent:'🍴',CreateEvent:'🆕'};
+  let h = '';
+  (d.events || []).slice(0, 8).forEach(e => {
+    const icon = icons[e.type] || '📌';
+    const time = new Date(e.created_at).toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'});
+    h += `<div class="feed-item"><span class="pulse"></span>${icon} ${e.actor} → ${e.type.replace('Event','')} on ${e.repo.split('/').pop()} <span style="float:right">${time}</span></div>`;
+  });
+  document.getElementById('feed').innerHTML = h;
+}
+
+loadStats(); loadFeed();
+setInterval(loadStats, 60000);
+setInterval(loadFeed, 30000);
+</script>
+</body>
+</html>

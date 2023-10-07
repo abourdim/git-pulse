@@ -1,0 +1,32 @@
+      </main>
+
+      <footer class="app-footer">
+        <span>GitPulse v{{version}} ({{codename}})</span>
+        <span class="footer-dot">·</span>
+        <a href="http://workshop-diy.org" target="_blank" data-i18n="footer_powered">workshop-diy.org</a>
+      </footer>
+    </div><!-- /main-area -->
+  </div><!-- /app-layout -->
+
+  <div class="deco-band bottom-band" aria-hidden="true"></div>
+</div><!-- /app -->
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<script>
+// Auto-open sidebar group containing the active page
+(function(){
+  var active = document.querySelector('.sb-link.active');
+  if (active) {
+    var g = active.closest('.sb-group');
+    if (g) g.classList.add('open');
+  }
+  // Fallback: if no active link, open Core
+  if (!document.querySelector('.sb-group.open')) {
+    var first = document.querySelector('.sb-group');
+    if (first) first.classList.add('open');
+  }
+})();
+</script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>

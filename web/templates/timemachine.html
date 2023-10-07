@@ -1,0 +1,44 @@
+{{include header.html}}
+<h2>⏰ Git Time Machine — {{repo_name}}</h2>
+<div class="card">
+  <div id="timeline-controls">
+    <input type="range" id="commit-slider" min="0" max="0" value="0" style="width:100%">
+    <p id="commit-info">Loading commits...</p>
+  </div>
+</div>
+<div class="card" id="file-tree" style="font-family:monospace;font-size:13px;max-height:500px;overflow:auto"></div>
+<script>
+let commits = [];
+async function loadTimeMachine() {
+  const r = await fetch('/api/repo/{{repo_name}}/commits');
+  const d = await r.json();
+  commits = d.commits || [];
+  if (commits.length === 0) { document.getElementById('commit-info').textContent = 'No commits found.'; return; }
+  const slider = document.getElementById('commit-slider');
+  slider.max = commits.length - 1;
+  slider.value = 0;
+  slider.oninput = () => showCommit(parseInt(slider.value));
+  showCommit(0);
+}
+function showCommit(idx) {
+  const c = commits[idx];
+  if (!c) return;
+  document.getElementById('commit-info').innerHTML =
+    `<strong>${c.sha}</strong> — ${c.message}<br><small>${c.author} · ${new Date(c.date).toLocaleString()}</small>`;
+  loadTree();
+}
+async function loadTree() {
+  const r = await fetch('/api/repo/{{repo_name}}/tree');
+  const d = await r.json();
+  const tree = d.tree || [];
+  let h = '';
+  tree.forEach(f => {
+    const icon = f.type === 'tree' ? '📁' : '📄';
+    const size = f.size > 0 ? ` (${(f.size/1024).toFixed(1)}KB)` : '';
+    h += `${icon} ${f.path}${size}\n`;
+  });
+  document.getElementById('file-tree').textContent = h;
+}
+loadTimeMachine();
+</script>
+{{include footer.html}}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — Themes & Languages</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Home</a><a href="readme.html">README</a><a href="install.html">Install</a>
+    <a href="howto.html">How-To</a><a href="faq.html">FAQ</a><a href="commands.html">Commands</a>
+    <a href="webui.html">Web UI</a><a href="themes.html" class="active">Themes</a><a href="config.html">Config</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Themes & Languages</h1>
+
+<h2>7 Islamic Art Themes</h2>
+<p>Each theme uses CSS custom properties. Change in Settings or edit <code>"web_theme"</code> in config.</p>
+
+<div class="card-grid">
+  <div class="card">
+    <h3>المسجد Masjid <span class="badge badge-cli">Default</span></h3>
+    <p>Night sky, turquoise domes, moonlight marble. Inspired by mosque architecture under starlight.</p>
+    <div class="theme-row">
+      <span class="theme-dot" style="background:#0a0e27" title="Background"></span>
+      <span class="theme-dot" style="background:#111633" title="Surface"></span>
+      <span class="theme-dot" style="background:#40c9c6" title="Accent"></span>
+      <span class="theme-dot" style="background:#e8ddb5" title="Accent 2"></span>
+    </div>
+    <p><code>"web_theme": "masjid"</code> · Dark mode</p>
+  </div>
+  <div class="card">
+    <h3>الأندلس Andalus</h3>
+    <p>Walnut wood, Cordoba gold, zellige tile red. Inspired by Al-Andalus Islamic Spain.</p>
+    <div class="theme-row">
+      <span class="theme-dot" style="background:#1a0f0a" title="Background"></span>
+      <span class="theme-dot" style="background:#2a1a10" title="Surface"></span>
+      <span class="theme-dot" style="background:#d4a843" title="Accent"></span>
+      <span class="theme-dot" style="background:#c0392b" title="Accent 2"></span>
+    </div>
+    <p><code>"web_theme": "andalus"</code> · Dark mode</p>
+  </div>
+  <div class="card">
+    <h3>الحمراء Al-Hamra</h3>
+    <p>Earth walls, terracotta arches, garden green. Inspired by the Alhambra palace.</p>
+    <div class="theme-row">
+      <span class="theme-dot" style="background:#1a1008" title="Background"></span>
+      <span class="theme-dot" style="background:#2a1c10" title="Surface"></span>
+      <span class="theme-dot" style="background:#c0714a" title="Accent"></span>
+      <span class="theme-dot" style="background:#5a8a4a" title="Accent 2"></span>
+    </div>
+    <p><code>"web_theme": "alhamra"</code> · Dark mode</p>
+  </div>
+  <div class="card">
+    <h3>نور Nur</h3>
+    <p>Aged parchment, gold ink, lapis lazuli. Inspired by illuminated manuscripts.</p>
+    <div class="theme-row">
+      <span class="theme-dot" style="background:#f5f0e8" title="Background"></span>
+      <span class="theme-dot" style="background:#ebe5d8" title="Surface"></span>
+      <span class="theme-dot" style="background:#c8a84a" title="Accent"></span>
+      <span class="theme-dot" style="background:#2e4a8a" title="Accent 2"></span>
+    </div>
+    <p><code>"web_theme": "nur"</code> · Light mode</p>
+  </div>
+  <div class="card">
+    <h3>رقش Raqsh</h3>
+    <p>Cream paper, Ottoman indigo, tulip red. Inspired by Ottoman calligraphy and İznik tiles.</p>
+    <div class="theme-row">
+      <span class="theme-dot" style="background:#faf5ef" title="Background"></span>
+      <span class="theme-dot" style="background:#f0e8dd" title="Surface"></span>
+      <span class="theme-dot" style="background:#3a4a8a" title="Accent"></span>
+      <span class="theme-dot" style="background:#b03040" title="Accent 2"></span>
+    </div>
+    <p><code>"web_theme": "raqsh"</code> · Light mode</p>
+  </div>
+  <div class="card">
+    <h3>صحراء Sahra</h3>
+    <p>Desert night sky, sand gold, twilight purple. Inspired by Saharan stargazing.</p>
+    <div class="theme-row">
+      <span class="theme-dot" style="background:#0a0a1e" title="Background"></span>
+      <span class="theme-dot" style="background:#141430" title="Surface"></span>
+      <span class="theme-dot" style="background:#d4a843" title="Accent"></span>
+      <span class="theme-dot" style="background:#8a5aaa" title="Accent 2"></span>
+    </div>
+    <p><code>"web_theme": "sahra"</code> · Dark mode</p>
+  </div>
+  <div class="card">
+    <h3>زهرة Zahra</h3>
+    <p>Deep ocean, emerald green, ruby red, jade geometry. Inspired by Islamic garden art.</p>
+    <div class="theme-row">
+      <span class="theme-dot" style="background:#081018" title="Background"></span>
+      <span class="theme-dot" style="background:#0e1828" title="Surface"></span>
+      <span class="theme-dot" style="background:#2ecc71" title="Accent"></span>
+      <span class="theme-dot" style="background:#e74c3c" title="Accent 2"></span>
+    </div>
+    <p><code>"web_theme": "zahra"</code> · Dark mode</p>
+  </div>
+</div>
+
+<h2>3 Languages (i18n v6.0)</h2>
+<table>
+  <tr><th>Language</th><th>Code</th><th>RTL</th><th>Notes</th></tr>
+  <tr><td>English</td><td><code>en</code></td><td>No</td><td>Default language</td></tr>
+  <tr><td>Français</td><td><code>fr</code></td><td>No</td><td>Full translation — sidebar, buttons, labels, empty states, modals</td></tr>
+  <tr><td>العربية</td><td><code>ar</code></td><td>Yes</td><td>Full translation — RTL layout, Amiri + Tajawal fonts</td></tr>
+</table>
+<p>Change via: Web <code>/settings</code> · Config: <code>"language": "ar"</code></p>
+
+<h3>How i18n Works</h3>
+<ul>
+  <li><strong>Translation files</strong>: <code>web/static/i18n/{en,fr,ar}.json</code> — 89 keys each</li>
+  <li><strong>Loader script</strong>: <code>web/static/js/i18n.js</code> — auto-loads on every page from localStorage</li>
+  <li><strong>HTML tagging</strong>: <code>data-i18n="key"</code> on elements, <code>data-i18n-attr="placeholder"</code> for inputs</li>
+  <li><strong>JS helper</strong>: <code>t("key")</code> for dynamic content</li>
+  <li><strong>Live switch</strong>: changing language in Settings applies instantly (no page reload)</li>
+  <li><strong>Persistence</strong>: saved to <code>localStorage("gp_language")</code>, applied before body renders (no flash)</li>
+  <li><strong>RTL</strong>: Arabic triggers <code>dir="rtl"</code> on <code>&lt;html&gt;</code> — sidebar, breadcrumbs, text all flip</li>
+</ul>
+
+<h3>What Gets Translated</h3>
+<table>
+  <tr><th>Area</th><th>Tags</th><th>Example (FR)</th></tr>
+  <tr><td>Sidebar nav</td><td>16</td><td>"Dépôts", "Santé", "Paramètres"</td></tr>
+  <tr><td>Page titles</td><td>6</td><td>"Tableau de bord", "Fichiers"</td></tr>
+  <tr><td>Table headers</td><td>10</td><td>"NOM", "VISIBILITÉ", "MIS À JOUR"</td></tr>
+  <tr><td>Toolbar buttons</td><td>12</td><td>"Voir", "Éditer", "Téléverser"</td></tr>
+  <tr><td>Empty states</td><td>2</td><td>"Sélectionnez un fichier…"</td></tr>
+  <tr><td>Genius cards</td><td>12</td><td>"Générer README", "Scanner de secrets"</td></tr>
+  <tr><td>Settings labels</td><td>8</td><td>"Thème", "Langue", "Version"</td></tr>
+  <tr><td>Inputs/placeholders</td><td>3</td><td>"Chercher dépôts…", "Filtrer fichiers…"</td></tr>
+  <tr><td>Modals</td><td>5</td><td>"Créer un dépôt", "Annuler", "Créer"</td></tr>
+</table>
+
+<h3>Adding a New Language</h3>
+<ol>
+  <li>Copy <code>web/static/i18n/en.json</code> to <code>xx.json</code></li>
+  <li>Translate all 89 values</li>
+  <li>Add <code>&lt;option value="xx"&gt;Language Name&lt;/option&gt;</code> in <code>settings.html</code></li>
+  <li>If RTL: add <code>val === "xx"</code> to the dir check in <code>header.html</code> and <code>settings.html</code></li>
+</ol>
+
+<h2>2 Modes</h2>
+<table>
+  <tr><th>Mode</th><th>Items</th><th>Audience</th><th>Notes</th></tr>
+  <tr><td>🐣 Beginner</td><td>8</td><td>New users</td><td>Friendly labels ("projects" not "repos"). Dangerous features hidden (delete, bulk ops).</td></tr>
+  <tr><td>🔥 Advanced</td><td>29</td><td>Power users</td><td>Full technical terminology. All features unlocked. Organized in sections.</td></tr>
+</table>
+<p>Switch anytime from Settings — no restart needed.</p>
+
+<div class="doc-footer">
+  <a href="index.html">← Back to Docs</a> · <a href="config.html">Config →</a>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — Configuration</title><link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Accueil</a><a href="readme.html">README</a><a href="install.html">Installation</a>
+    <a href="howto.html">Guides</a><a href="faq.html">FAQ</a><a href="commands.html">Commandes</a>
+    <a href="webui.html">Interface Web</a><a href="themes.html">Thèmes</a><a href="config.html" class="active">Configuration</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Configuration</h1>
+
+<h2>Emplacement du fichier</h2>
+<pre><code>~/.gitpulse/config.json</code></pre>
+<p>Créé automatiquement au premier lancement. Modifiable manuellement ou via l'interface des Paramètres.</p>
+
+<h2>Toutes les clés de configuration</h2>
+<table>
+  <tr><th>Clé</th><th>Type</th><th>Défaut</th><th>Valeurs</th><th>Description</th></tr>
+  <tr><td><code>github_token</code></td><td>chaîne</td><td><code>""</code></td><td>ghp_…</td><td>Token d'accès personnel GitHub</td></tr>
+  <tr><td><code>web_theme</code></td><td>chaîne</td><td><code>masjid</code></td><td>masjid, andalus, alhamra, nur, raqsh, sahra, zahra</td><td>Thème de l'interface Web</td></tr>
+  <tr><td><code>language</code></td><td>chaîne</td><td><code>en</code></td><td><code>en</code>, <code>fr</code>, <code>ar</code></td><td>Langue de l'interface</td></tr>
+  <tr><td><code>mode</code></td><td>chaîne</td><td><code>advanced</code></td><td><code>beginner</code>, <code>advanced</code></td><td>Mode de l'interface</td></tr>
+  <tr><td><code>web_host</code></td><td>chaîne</td><td><code>127.0.0.1</code></td><td>IP</td><td>Adresse d'écoute du serveur web</td></tr>
+  <tr><td><code>web_port</code></td><td>entier</td><td><code>5000</code></td><td>1024-65535</td><td>Port du serveur web</td></tr>
+  <tr><td><code>openai_key</code></td><td>chaîne</td><td><code>""</code></td><td>sk-…</td><td>Clé API OpenAI (optionnelle, pour les résumés IA)</td></tr>
+</table>
+
+<h2>Multi-compte</h2>
+<p>Gérez plusieurs comptes GitHub dans <code>~/.gitpulse/accounts.json</code> :</p>
+<pre><code>{
+  "default": "personnel",
+  "accounts": {
+    "personnel": { "token": "ghp_xxx", "label": "Mon GitHub" },
+    "travail": { "token": "ghp_yyy", "label": "Organisation" }
+  }
+}</code></pre>
+<p>Basculez via la commande CLI #27 (Multi-compte) ou en modifiant le fichier.</p>
+
+<h2>Persistance côté client (v3.0+)</h2>
+<p>L'interface Web utilise une <strong>double persistance</strong> pour le thème, la langue et le mode :</p>
+<table>
+  <tr><th>Stockage</th><th>Clés</th><th>Objectif</th></tr>
+  <tr><td><code>localStorage</code></td><td><code>gp_theme</code>, <code>gp_language</code>, <code>gp_mode</code>, <code>gp_sort</code></td><td>Application instantanée — pas de rechargement, pas de flash</td></tr>
+  <tr><td><code>config.json</code></td><td><code>web_theme</code>, <code>language</code>, <code>mode</code></td><td>Repli côté serveur. Synchronisé via POST /api/settings</td></tr>
+</table>
+<p>localStorage a la priorité. S'il est vidé, le repli utilise la config serveur.</p>
+
+<h2>Mode portable</h2>
+<p>En exécution depuis USB via <code>portable/run.bat</code> ou <code>run.sh</code> :</p>
+<ul>
+  <li><code>GHM_CONFIG</code> pointe vers <code>portable/config/</code> sur la clé USB</li>
+  <li>Config, comptes et tokens stockés sur la clé USB</li>
+  <li>Rien n'est écrit sur la machine hôte</li>
+</ul>
+
+<h2>Dépannage</h2>
+<table>
+  <tr><th>Problème</th><th>Solution</th></tr>
+  <tr><td>Config ne sauvegarde pas</td><td>Vérifier les permissions : <code>ls -la ~/.gitpulse/</code></td></tr>
+  <tr><td>Token non trouvé</td><td>Vérifier <code>cat ~/.gitpulse/config.json</code> ou <code>echo $GITHUB_TOKEN</code></td></tr>
+  <tr><td>Port occupé</td><td>Changer <code>"web_port"</code> à 8080 ou un autre port libre</td></tr>
+  <tr><td>Tout réinitialiser</td><td><code>rm -rf ~/.gitpulse/</code> puis relancer (l'assistant réapparaîtra)</td></tr>
+</table>
+
+<div class="doc-footer">
+  <a href="index.html">← Retour aux Docs</a>
+</div>
+</div>
+</body>
+</html>

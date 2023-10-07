@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — Welcome</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+<style>
+  .welcome-wrap {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; text-align: center; padding: 40px 20px;
+  }
+  .welcome-bismillah { font-family: 'Amiri', serif; font-size: 28px; color: var(--accent2); margin-bottom: 30px; }
+  .welcome-title { font-size: 36px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+  .welcome-sub { color: var(--text-dim); margin-bottom: 40px; font-size: 15px; }
+  .welcome-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 35px 40px; max-width: 480px; width: 100%;
+  }
+
+  /* Big demo button — first thing you see */
+  .btn-big-demo {
+    width: 100%; padding: 18px; font-size: 20px; border-radius: 12px;
+    background: var(--accent); color: var(--bg); border: none;
+    cursor: pointer; font-weight: 700; transition: all 0.2s;
+    margin-bottom: 8px;
+  }
+  .btn-big-demo:hover { opacity: 0.85; transform: scale(1.02); }
+  .demo-info { font-size: 13px; color: var(--text-dim); margin-bottom: 0; }
+
+  /* Divider */
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    color: var(--text-dim); font-size: 12px; margin: 24px 0;
+  }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Collapsible token section */
+  .token-section { text-align: left; }
+  .token-toggle {
+    background: none; border: none; color: var(--text-dim); cursor: pointer;
+    font-size: 14px; padding: 8px 0; width: 100%; text-align: center;
+    transition: color 0.2s;
+  }
+  .token-toggle:hover { color: var(--accent); }
+  .token-content { display: none; margin-top: 14px; }
+  .token-content.open { display: block; }
+
+  .token-content input[type="text"] {
+    width: 100%; padding: 12px 14px; margin-bottom: 12px;
+    font-size: 14px; border-radius: 8px;
+  }
+  .token-content button {
+    width: 100%; padding: 12px; font-size: 14px; border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  /* Help steps */
+  .help-box {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; margin-bottom: 14px; text-align: left;
+    font-size: 12px; color: var(--text-dim); line-height: 1.8;
+  }
+  .help-box a { color: var(--accent); }
+  .help-box ol { margin: 6px 0 0 16px; padding: 0; }
+  .help-box li { margin-bottom: 2px; }
+  .help-title { font-weight: 600; color: var(--text); font-size: 13px; margin-bottom: 4px; }
+
+  /* Bottom links */
+  .bottom-links { margin-top: 24px; display: flex; gap: 20px; justify-content: center; }
+  .bottom-links a {
+    color: var(--text-dim); text-decoration: none; font-size: 13px;
+    padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .bottom-links a:hover { color: var(--accent); border-color: var(--accent); }
+
+  .error-msg { color: var(--danger); font-size: 13px; margin-bottom: 10px; display: none; }
+  .welcome-footer { margin-top: 40px; color: var(--text-dim); font-size: 12px; }
+  .welcome-footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body class="theme-masjid">
+<div class="welcome-wrap">
+  <div class="welcome-bismillah">&#1576;&#1587;&#1605; &#1575;&#1604;&#1604;&#1607; &#1575;&#1604;&#1585;&#1581;&#1605;&#1606; &#1575;&#1604;&#1585;&#1581;&#1610;&#1605;</div>
+  <div class="welcome-title">GitPulse</div>
+  <div class="welcome-sub">Manage all your GitHub projects in one place</div>
+
+  <div class="welcome-box">
+
+    <!-- BIG DEMO BUTTON — first thing -->
+    <button class="btn-big-demo" onclick="startDemo()">&#9733; Explore Demo</button>
+    <p class="demo-info">No account needed &mdash; see all features with sample projects</p>
+
+    <div class="divider">browse any public profile</div>
+
+    <!-- Username section -->
+    <div class="token-section">
+      <p id="user-error-msg" class="error-msg"></p>
+      <input type="text" id="username-input" placeholder="Enter a GitHub username" style="margin-bottom:8px;">
+      <button onclick="connectUsername()">Browse public repos</button>
+    </div>
+
+    <div class="divider">or connect with a token for full access</div>
+
+    <!-- Token section — collapsed by default -->
+    <div class="token-section">
+      <button class="token-toggle" onclick="toggleToken()">&#128279; Connect my GitHub account &#9660;</button>
+      <div id="token-content" class="token-content">
+        <div class="help-box">
+          <div class="help-title">How to get your token (1 minute):</div>
+          <ol>
+            <li>Go to <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a></li>
+            <li>Click <strong>"Generate new token (classic)"</strong></li>
+            <li>Name it <strong>GitPulse</strong>, check <strong>repo</strong> scope</li>
+            <li>Click Generate &mdash; copy the <code>ghp_...</code> code</li>
+            <li>Paste it below</li>
+          </ol>
+        </div>
+        <p id="error-msg" class="error-msg"></p>
+        <input type="text" id="token-input" placeholder="Paste your token here (ghp_...)">
+        <button onclick="connectToken()">Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom links -->
+  <div class="bottom-links">
+    <a href="/tutorial">&#128214; Tutorial</a>
+    <a href="/docs/">&#128196; Docs</a>
+  </div>
+
+  <div class="welcome-footer">
+    <a href="http://workshop-diy.org" target="_blank">workshop-diy.org</a>
+  </div>
+</div>
+
+<script>
+function toggleToken() {
+  var el = document.getElementById('token-content');
+  el.classList.toggle('open');
+}
+
+async function connectToken() {
+  var token = document.getElementById('token-input').value.trim();
+  if (!token) return;
+  document.getElementById('error-msg').style.display = 'none';
+  var r = await fetch('/api/connect', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({token: token})
+  });
+  var d = await r.json();
+  if (d.ok) {
+    window.location.href = '/';
+  } else {
+    document.getElementById('error-msg').textContent = d.error || 'Invalid token';
+    document.getElementById('error-msg').style.display = 'block';
+  }
+}
+
+async function startDemo() {
+  var r = await fetch('/api/connect', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({demo: true})
+  });
+  var d = await r.json();
+  if (d.ok) {
+    window.location.href = '/';
+  }
+}
+
+async function connectUsername() {
+  var username = document.getElementById('username-input').value.trim();
+  if (!username) return;
+  document.getElementById('user-error-msg').style.display = 'none';
+  var r = await fetch('/api/connect', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({username: username})
+  });
+  var d = await r.json();
+  if (d.ok) {
+    window.location.href = '/';
+  } else {
+    document.getElementById('user-error-msg').textContent = d.error || 'User not found';
+    document.getElementById('user-error-msg').style.display = 'block';
+  }
+}
+
+document.getElementById('username-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') connectUsername();
+});
+document.getElementById('token-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') connectToken();
+});
+</script>
+</body>
+</html>

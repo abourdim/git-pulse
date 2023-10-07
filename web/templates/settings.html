@@ -1,0 +1,330 @@
+{{include header.html}}
+
+<style>
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:600px){.settings-grid{grid-template-columns:1fr}}
+
+.setting-card{border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);padding:20px;position:relative;overflow:hidden}
+.setting-card::before{content:var(--card-ornament);position:absolute;top:8px;right:12px;font-size:11px;color:var(--accent);opacity:.15;pointer-events:none}
+.setting-card h3{font-family:var(--font-h);font-size:.85rem;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}
+.theme-option{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:10px;border:2px solid transparent;cursor:pointer;transition:all .2s}
+.theme-option:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.03)}
+.theme-option.active{border-color:var(--accent);background:var(--glow)}
+.theme-swatch{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.1);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.theme-option:hover .theme-swatch{transform:scale(1.15)}
+.theme-option.active .theme-swatch{border-color:var(--accent);box-shadow:0 0 12px var(--glow)}
+.theme-label{font-size:.65rem;color:var(--text-dim);text-align:center;line-height:1.2}
+.theme-label-ar{font-size:.6rem;opacity:.5;font-family:'Amiri',serif}
+
+.setting-select{width:100%;padding:8px 12px;border-radius:var(--radius);background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--text);font-size:.82rem;font-family:var(--font-b);cursor:pointer;transition:border-color .2s}
+.setting-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 10px var(--glow)}
+.setting-select option{background:var(--surface);color:var(--text)}
+
+.info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem}
+.info-label{color:var(--text-dim)}
+.info-value{color:var(--text);font-weight:500}
+
+.save-toast{position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,var(--accent),var(--band2));color:var(--bg);padding:10px 18px;border-radius:50px;font-weight:700;font-size:.82rem;z-index:9999;box-shadow:0 4px 16px var(--glow);opacity:0;transform:translateY(10px);transition:all .3s}
+.save-toast.show{opacity:1;transform:translateY(0)}
+</style>
+
+<h2 data-i18n="page_settings">Settings</h2>
+
+<!-- ACCOUNT -->
+<div class="setting-card" style="margin-bottom:16px">
+  <h3 data-i18n="settings_account">Account</h3>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+    <select class="setting-select" id="accountSelect" style="flex:1;min-width:180px" onchange="switchAccount(this.value)">
+      <option value="" disabled>Select account...</option>
+    </select>
+    <button class="gp-btn" onclick="showAddAccount()" style="padding:6px 14px;font-size:.78rem;border-radius:var(--radius);background:var(--accent);color:var(--bg);border:none;cursor:pointer;font-weight:600">+ Add</button>
+  </div>
+  <div id="accountInfo" style="font-size:.78rem;color:var(--text-dim)"></div>
+
+  <!-- Add Account Modal -->
+  <div id="addAccountModal" style="display:none;margin-top:14px;padding:14px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(0,0,0,.2)">
+    <div style="display:grid;gap:10px">
+      <input id="accLabel" class="setting-select" placeholder="Label (e.g. work, personal)" style="font-size:.8rem">
+      <input id="accToken" class="setting-select" placeholder="GitHub token (ghp_...)" type="password" style="font-size:.8rem">
+      <div style="display:flex;gap:8px">
+        <button onclick="addAccount()" style="padding:6px 16px;border-radius:var(--radius);background:var(--accent);color:var(--bg);border:none;cursor:pointer;font-weight:600;font-size:.78rem">Save</button>
+        <button onclick="hideAddAccount()" style="padding:6px 16px;border-radius:var(--radius);background:transparent;color:var(--text-dim);border:1px solid var(--border);cursor:pointer;font-size:.78rem">Cancel</button>
+        <button id="accDeleteBtn" onclick="deleteAccount()" style="margin-left:auto;padding:6px 16px;border-radius:var(--radius);background:transparent;color:var(--danger,#e74c3c);border:1px solid var(--danger,#e74c3c);cursor:pointer;font-size:.78rem;display:none">Remove selected</button>
+      </div>
+    </div>
+    <div id="accMsg" style="margin-top:8px;font-size:.78rem"></div>
+  </div>
+</div>
+
+<!-- DISPLAY NAME -->
+<div class="setting-card" style="margin-bottom:16px">
+  <h3 data-i18n="settings_display_name">Display Name</h3>
+  <div style="display:flex;gap:10px;align-items:center">
+    <input id="displayNameInput" class="setting-select" placeholder="Leave empty for GitHub username" style="flex:1;font-size:.82rem" value="">
+    <button onclick="saveDisplayName()" style="padding:6px 14px;border-radius:var(--radius);background:var(--accent);color:var(--bg);border:none;cursor:pointer;font-weight:600;font-size:.78rem">Save</button>
+  </div>
+</div>
+
+<!-- THEME -->
+<div class="setting-card" style="margin-bottom:16px">
+  <h3 data-i18n="settings_theme">Theme</h3>
+  <div class="theme-grid" id="themeGrid">
+    <div class="theme-option" data-theme="masjid" onclick="setTheme('masjid')">
+      <div class="theme-swatch" style="background:linear-gradient(135deg,#40c9c6,#e8ddb5)"></div>
+      <div class="theme-label">Masjid<br><span class="theme-label-ar">المسجد</span></div>
+    </div>
+    <div class="theme-option" data-theme="andalus" onclick="setTheme('andalus')">
+      <div class="theme-swatch" style="background:linear-gradient(135deg,#d4a843,#c0392b)"></div>
+      <div class="theme-label">Andalus<br><span class="theme-label-ar">الأندلس</span></div>
+    </div>
+    <div class="theme-option" data-theme="alhamra" onclick="setTheme('alhamra')">
+      <div class="theme-swatch" style="background:linear-gradient(135deg,#c0714a,#5a8a4a)"></div>
+      <div class="theme-label">Al-Hamra<br><span class="theme-label-ar">الحمراء</span></div>
+    </div>
+    <div class="theme-option" data-theme="nur" onclick="setTheme('nur')">
+      <div class="theme-swatch" style="background:linear-gradient(135deg,#c8a84a,#2e4a8a);border-color:#d4c8a8"></div>
+      <div class="theme-label">Nur<br><span class="theme-label-ar">نور</span></div>
+    </div>
+    <div class="theme-option" data-theme="raqsh" onclick="setTheme('raqsh')">
+      <div class="theme-swatch" style="background:linear-gradient(135deg,#3a4a8a,#b03040)"></div>
+      <div class="theme-label">Raqsh<br><span class="theme-label-ar">رقش</span></div>
+    </div>
+    <div class="theme-option" data-theme="sahra" onclick="setTheme('sahra')">
+      <div class="theme-swatch" style="background:linear-gradient(135deg,#d4a843,#8a5aaa)"></div>
+      <div class="theme-label">Sahra<br><span class="theme-label-ar">صحراء</span></div>
+    </div>
+    <div class="theme-option" data-theme="zahra" onclick="setTheme('zahra')">
+      <div class="theme-swatch" style="background:linear-gradient(135deg,#2ecc71,#e74c3c)"></div>
+      <div class="theme-label">Zahra<br><span class="theme-label-ar">زهرة</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="settings-grid">
+  <!-- LANGUAGE -->
+  <div class="setting-card">
+    <h3 data-i18n="settings_language">Language</h3>
+    <select class="setting-select" id="langSelect" onchange="setLang(this.value)">
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+      <option value="ar">عربي</option>
+    </select>
+  </div>
+
+  <!-- MODE -->
+  <div class="setting-card">
+    <h3 data-i18n="settings_mode">Mode</h3>
+    <select class="setting-select" id="modeSelect" onchange="setMode(this.value)">
+      <option value="beginner" data-i18n="mode_beginner">Beginner — essentials only</option>
+      <option value="advanced" data-i18n="mode_advanced">Advanced — all features</option>
+    </select>
+  </div>
+</div>
+
+<!-- INFO -->
+<div class="setting-card">
+  <h3 data-i18n="settings_info">Info</h3>
+  <div class="info-row"><span class="info-label" data-i18n="settings_version">Version</span><span class="info-value">{{version}} ({{codename}})</span></div>
+  <div class="info-row"><span class="info-label" data-i18n="settings_user">User</span><span class="info-value" id="infoUser">{{username}}</span></div>
+  <div class="info-row"><span class="info-label" data-i18n="settings_theme">Theme</span><span class="info-value" id="infoTheme">{{theme}}</span></div>
+  <div class="info-row"><span class="info-label" data-i18n="settings_language">Language</span><span class="info-value" id="infoLang">{{language}}</span></div>
+  <div class="info-row"><span class="info-label" data-i18n="settings_mode">Mode</span><span class="info-value" id="infoMode">{{mode}}</span></div>
+  <div class="info-row" style="border:none"><span class="info-label" data-i18n="settings_website">Website</span><span class="info-value"><a href="http://workshop-diy.org" target="_blank">workshop-diy.org</a></span></div>
+</div>
+
+<div class="save-toast" id="saveToast"></div>
+
+<script>
+(function(){
+  // Load saved settings from localStorage
+  var t = localStorage.getItem("gp_theme");
+  if(t) applyTheme(t);
+  var l = localStorage.getItem("gp_language");
+  if(l) document.getElementById("langSelect").value = l;
+  var m = localStorage.getItem("gp_mode");
+  if(m) document.getElementById("modeSelect").value = m;
+  highlightActive();
+})();
+
+function setTheme(name){
+  localStorage.setItem("gp_theme", name);
+  applyTheme(name);
+  highlightActive();
+  document.getElementById("infoTheme").textContent = name;
+  syncServer({web_theme: name});
+  toast("Theme → " + name);
+}
+
+function applyTheme(name){
+  // Remove all theme-* classes, add new one
+  var cl = document.body.className.replace(/theme-\S+/g,"").trim();
+  document.body.className = cl + " theme-" + name;
+}
+
+function highlightActive(){
+  var current = localStorage.getItem("gp_theme") || "{{theme}}";
+  document.querySelectorAll(".theme-option").forEach(function(el){
+    el.classList.toggle("active", el.getAttribute("data-theme") === current);
+  });
+}
+
+function setLang(val){
+  localStorage.setItem("gp_language", val);
+  document.getElementById("infoLang").textContent = val;
+  document.documentElement.lang = val;
+  document.documentElement.dir = val === "ar" ? "rtl" : "ltr";
+  // Reload translations live
+  if(window.i18n) window.i18n.load(val);
+  syncServer({language: val});
+  toast("Language → " + val);
+}
+
+function setMode(val){
+  localStorage.setItem("gp_mode", val);
+  document.getElementById("infoMode").textContent = val;
+  syncServer({mode: val});
+  toast("Mode → " + val);
+}
+
+function syncServer(data){
+  fetch("/api/settings",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(data)
+  }).catch(function(){});
+}
+
+function toast(msg){
+  var el = document.getElementById("saveToast");
+  el.textContent = "✅ " + msg;
+  el.classList.add("show");
+  setTimeout(function(){ el.classList.remove("show"); }, 2000);
+}
+
+// ─── ACCOUNTS ───────────────────────────────────────────────
+var _accounts = {{accounts_json}};
+
+function renderAccounts(){
+  var sel = document.getElementById("accountSelect");
+  var info = document.getElementById("accountInfo");
+  var delBtn = document.getElementById("accDeleteBtn");
+  sel.innerHTML = "";
+
+  if(_accounts.length === 0){
+    sel.innerHTML = '<option value="" disabled selected>No accounts saved — click + Add</option>';
+    info.textContent = "";
+    delBtn.style.display = "none";
+    return;
+  }
+
+  var activeLabel = "";
+  _accounts.forEach(function(a){
+    var opt = document.createElement("option");
+    opt.value = a.label;
+    opt.textContent = a.label + " — " + a.username + (a.active ? " ✓" : "");
+    if(a.active){ opt.selected = true; activeLabel = a.label; }
+    sel.appendChild(opt);
+  });
+
+  var active = _accounts.find(function(a){ return a.active; });
+  info.textContent = active ? "Active: " + active.username + " (" + active.label + ")" : "";
+  delBtn.style.display = _accounts.length > 0 ? "" : "none";
+}
+
+function switchAccount(label){
+  if(!label) return;
+  fetch("/api/account/switch",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({label:label})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(d.ok){
+      _accounts.forEach(function(a){ a.active = (a.label === label); });
+      renderAccounts();
+      document.getElementById("infoUser").textContent = d.display_name || d.username;
+      toast("Account → " + label + " (" + d.username + ")");
+      // Refresh sidebar username
+      var sbUser = document.querySelector(".user-pill");
+      if(sbUser) sbUser.textContent = d.display_name || d.username;
+    } else {
+      toast("Error: " + (d.error || "failed"));
+    }
+  }).catch(function(){ toast("Error: network"); });
+}
+
+function showAddAccount(){ document.getElementById("addAccountModal").style.display = ""; }
+function hideAddAccount(){
+  document.getElementById("addAccountModal").style.display = "none";
+  document.getElementById("accLabel").value = "";
+  document.getElementById("accToken").value = "";
+  document.getElementById("accMsg").textContent = "";
+}
+
+function addAccount(){
+  var label = document.getElementById("accLabel").value.trim();
+  var token = document.getElementById("accToken").value.trim();
+  var msg = document.getElementById("accMsg");
+  if(!label || !token){ msg.innerHTML = '<span style="color:var(--danger,#e74c3c)">Label and token required</span>'; return; }
+  msg.innerHTML = '<span style="color:var(--text-dim)">Validating token...</span>';
+
+  fetch("/api/account/add",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({label:label,token:token})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(d.ok){
+      _accounts.push({label:d.label, username:d.username, active:false});
+      renderAccounts();
+      hideAddAccount();
+      toast("Account added: " + d.label + " (" + d.username + ")");
+    } else {
+      msg.innerHTML = '<span style="color:var(--danger,#e74c3c)">' + (d.error || "Failed") + '</span>';
+    }
+  }).catch(function(){ msg.innerHTML = '<span style="color:var(--danger,#e74c3c)">Network error</span>'; });
+}
+
+function deleteAccount(){
+  var sel = document.getElementById("accountSelect");
+  var label = sel.value;
+  if(!label) return;
+  var active = _accounts.find(function(a){ return a.active; });
+  if(active && active.label === label){
+    if(!confirm("Remove the active account? You'll need to switch to another.")) return;
+  } else {
+    if(!confirm("Remove account '" + label + "'?")) return;
+  }
+
+  fetch("/api/account/delete",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({label:label})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(d.ok){
+      _accounts = _accounts.filter(function(a){ return a.label !== label; });
+      renderAccounts();
+      toast("Removed: " + label);
+    } else {
+      toast("Error: " + (d.error || "failed"));
+    }
+  }).catch(function(){ toast("Error: network"); });
+}
+
+// ─── DISPLAY NAME ───────────────────────────────────────────
+(function(){
+  var dn = "{{config.display_name}}";
+  if(dn && dn !== "None" && dn !== "{{" + "config.display_name}}") {
+    document.getElementById("displayNameInput").value = dn;
+  }
+})();
+
+function saveDisplayName(){
+  var val = document.getElementById("displayNameInput").value.trim();
+  syncServer({display_name: val});
+  document.getElementById("infoUser").textContent = val || "{{username}}";
+  var sbUser = document.querySelector(".user-pill");
+  if(sbUser) sbUser.textContent = val || "{{username}}";
+  toast("Display name → " + (val || "(GitHub default)"));
+}
+
+renderAccounts();
+</script>
+
+{{include footer.html}}

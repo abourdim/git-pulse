@@ -1,0 +1,24 @@
+{{include header.html}}
+<h2>📂 Smart Repo Grouper</h2>
+<div class="card"><button onclick="loadGroups()">📊 Auto-Group All Repos</button></div>
+<div id="groups"></div>
+<script>
+const icons = {"Web App":"🌐","Mobile":"📱","IoT / HW":"🔌","API / Backend":"⚙️","Library":"📦","Data / ML":"🧠","DevOps":"🔧","Docs":"📚","Learning":"🎓","Tool / CLI":"🛠️","Other":"📂"};
+async function loadGroups() {
+  document.getElementById('groups').innerHTML = '<p>Analyzing repos...</p>';
+  const r = await fetch('/api/grouper');
+  const d = await r.json();
+  let h = '';
+  for (const [cat, repos] of Object.entries(d.groups || {})) {
+    const icon = icons[cat] || '📂';
+    h += `<div class="card"><h3>${icon} ${cat} (${repos.length})</h3>`;
+    repos.forEach(r => {
+      const vis = r.private ? '🔴' : '🟢';
+      h += `<p>${vis} <a href="/repo/${r.name}">${r.name}</a> <small>${r.language||''}</small></p>`;
+    });
+    h += '</div>';
+  }
+  document.getElementById('groups').innerHTML = h;
+}
+</script>
+{{include footer.html}}

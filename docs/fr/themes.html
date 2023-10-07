@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitPulse — Thèmes & Langues</title><link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="doc-topbar">
+  <span class="logo">GitPulse Docs</span>
+  <nav>
+    <a href="index.html">Accueil</a><a href="readme.html">README</a><a href="install.html">Installation</a>
+    <a href="howto.html">Guides</a><a href="faq.html">FAQ</a><a href="commands.html">Commandes</a>
+    <a href="webui.html">Interface Web</a><a href="themes.html" class="active">Thèmes</a><a href="config.html">Configuration</a>
+  </nav>
+  <span class="bismillah">بسم الله الرحمن الرحيم</span>
+</div>
+<div class="doc-wrap">
+<h1>Thèmes & Langues</h1>
+
+<h2>7 thèmes d'art islamique</h2>
+<p>Chaque thème utilise des propriétés CSS personnalisées. Changez dans Paramètres ou modifiez <code>"web_theme"</code> dans la config.</p>
+
+<div class="card-grid">
+  <div class="card">
+    <h3>المسجد Masjid <span class="badge badge-cli">Défaut</span></h3>
+    <p>Ciel nocturne, dômes turquoise, marbre au clair de lune. Inspiré de l'architecture des mosquées sous les étoiles.</p>
+    <div class="theme-row">
+      <span class="theme-dot" style="background:#0a0e27" title="Fond"></span>
+      <span class="theme-dot" style="background:#111633" title="Surface"></span>
+      <span class="theme-dot" style="background:#40c9c6" title="Accent"></span>
+      <span class="theme-dot" style="background:#e8ddb5" title="Accent 2"></span>
+    </div>
+    <p><code>"web_theme": "masjid"</code> · Mode sombre</p>
+  </div>
+  <div class="card">
+    <h3>الأندلس Andalus</h3>
+    <p>Bois de noyer, or de Cordoue, rouge zellige. Inspiré de l'Espagne islamique Al-Andalus.</p>
+    <p><code>"web_theme": "andalus"</code> · Mode sombre</p>
+  </div>
+  <div class="card">
+    <h3>الحمراء Al-Hamra</h3>
+    <p>Murs de terre, arches en terre cuite, vert jardin. Inspiré du palais de l'Alhambra.</p>
+    <p><code>"web_theme": "alhamra"</code> · Mode sombre</p>
+  </div>
+  <div class="card">
+    <h3>نور Nur</h3>
+    <p>Parchemin vieilli, encre dorée, lapis-lazuli. Inspiré des manuscrits enluminés.</p>
+    <p><code>"web_theme": "nur"</code> · Mode clair</p>
+  </div>
+  <div class="card">
+    <h3>رقش Raqsh</h3>
+    <p>Papier crème, indigo ottoman, rouge tulipe. Inspiré de la calligraphie ottomane et des carreaux İznik.</p>
+    <p><code>"web_theme": "raqsh"</code> · Mode clair</p>
+  </div>
+  <div class="card">
+    <h3>صحراء Sahra</h3>
+    <p>Ciel nocturne du désert, or de sable, violet crépusculaire. Inspiré de l'observation des étoiles au Sahara.</p>
+    <p><code>"web_theme": "sahra"</code> · Mode sombre</p>
+  </div>
+  <div class="card">
+    <h3>زهرة Zahra</h3>
+    <p>Océan profond, vert émeraude, rouge rubis, géométrie jade. Inspiré de l'art des jardins islamiques.</p>
+    <p><code>"web_theme": "zahra"</code> · Mode sombre</p>
+  </div>
+</div>
+
+<h2>3 langues (i18n v6.0)</h2>
+<table>
+  <tr><th>Langue</th><th>Code</th><th>RTL</th><th>Notes</th></tr>
+  <tr><td>English</td><td><code>en</code></td><td>Non</td><td>Langue par défaut</td></tr>
+  <tr><td>Français</td><td><code>fr</code></td><td>Non</td><td>Traduction complète — barre latérale, boutons, libellés, états vides, modales</td></tr>
+  <tr><td>العربية</td><td><code>ar</code></td><td>Oui</td><td>Traduction complète — mise en page RTL, polices Amiri + Tajawal</td></tr>
+</table>
+
+<h3>Comment fonctionne l'i18n</h3>
+<ul>
+  <li><strong>Fichiers de traduction</strong> : <code>web/static/i18n/{en,fr,ar}.json</code> — 89 clés chacun</li>
+  <li><strong>Script chargeur</strong> : <code>web/static/js/i18n.js</code> — charge automatiquement depuis localStorage sur chaque page</li>
+  <li><strong>Balisage HTML</strong> : <code>data-i18n="clé"</code> sur les éléments, <code>data-i18n-attr="placeholder"</code> pour les champs de saisie</li>
+  <li><strong>Changement en direct</strong> : changer la langue dans Paramètres s'applique instantanément (pas de rechargement)</li>
+</ul>
+
+<h3>Ajouter une nouvelle langue</h3>
+<ol>
+  <li>Copier <code>web/static/i18n/en.json</code> en <code>xx.json</code></li>
+  <li>Traduire les 89 valeurs</li>
+  <li>Ajouter <code>&lt;option value="xx"&gt;Nom de la langue&lt;/option&gt;</code> dans <code>settings.html</code></li>
+  <li>Si RTL : ajouter <code>val === "xx"</code> à la vérification dir dans <code>header.html</code> et <code>settings.html</code></li>
+</ol>
+
+<h2>2 modes</h2>
+<table>
+  <tr><th>Mode</th><th>Éléments</th><th>Public</th><th>Notes</th></tr>
+  <tr><td>🐣 Débutant</td><td>8</td><td>Nouveaux utilisateurs</td><td>Libellés conviviaux (« projets » au lieu de « dépôts »). Fonctions dangereuses masquées.</td></tr>
+  <tr><td>🔥 Avancé</td><td>29</td><td>Utilisateurs expérimentés</td><td>Terminologie technique complète. Toutes les fonctions déverrouillées.</td></tr>
+</table>
+<p>Changez à tout moment depuis Paramètres — aucun redémarrage nécessaire.</p>
+
+<div class="doc-footer">
+  <a href="index.html">← Retour aux Docs</a> · <a href="config.html">Configuration →</a>
+</div>
+</div>
+</body>
+</html>
