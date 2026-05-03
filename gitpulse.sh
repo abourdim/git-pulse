@@ -64,7 +64,9 @@ detect_platform() {
     uname_s="$(uname -s)"
 
     # ── MSYS2 environments ────────────────────────────────────
-    if [[ -n "${MSYSTEM:-}" ]]; then
+    # Note: Git Bash (Git for Windows) also sets MSYSTEM, so require pacman
+    # to actually exist before treating this as a real MSYS2 install.
+    if [[ -n "${MSYSTEM:-}" ]] && command -v pacman &>/dev/null; then
         PKG_MGR="pacman"
 
         case "$MSYSTEM" in
@@ -102,7 +104,7 @@ detect_platform() {
                 PLATFORM="msys2-msys"
                 PYTHON_PKG="python"
                 PIP_PKG="python-pip"
-                REQUESTS_PKG=""
+                REQUESTS_PKG="python-requests"
                 ;;
             *)
                 PLATFORM="msys2-$MSYSTEM"
@@ -186,14 +188,30 @@ detect_platform() {
     fi
 
     # ── Detect Python command ─────────────────────────────────
-    if command -v python3 &>/dev/null; then
-        PYTHON_CMD="python3"
-    elif command -v python &>/dev/null; then
-        PYTHON_CMD="python"
-    fi
+    # On Windows (Git Bash / MSYS2), 'python3' often points to a separate
+    # Windows Store install while 'python' points to the user's real
+    # Python.org install — they have different site-packages. Prefer
+    # 'python' on Windows-ish shells, 'python3' elsewhere. Skip any
+    # candidate that doesn't actually run.
+    local order
+    case "$PLATFORM" in
+        gitbash|msys2-*) order="python python3" ;;
+        *)               order="python3 python" ;;
+    esac
+    local cand
+    for cand in $order; do
+        if command -v "$cand" &>/dev/null && "$cand" -c "import sys" &>/dev/null; then
+            PYTHON_CMD="$cand"
+            break
+        fi
+    done
 
     # ── Detect pip command ────────────────────────────────────
-    if command -v pip3 &>/dev/null; then
+    # Prefer `python -m pip` so pip is guaranteed to match PYTHON_CMD.
+    # Falls back to standalone pip3/pip only if -m pip isn't available.
+    if [[ -n "$PYTHON_CMD" ]] && $PYTHON_CMD -m pip --version &>/dev/null; then
+        PIP_CMD="$PYTHON_CMD -m pip"
+    elif command -v pip3 &>/dev/null; then
         PIP_CMD="pip3"
     elif command -v pip &>/dev/null; then
         PIP_CMD="pip"
